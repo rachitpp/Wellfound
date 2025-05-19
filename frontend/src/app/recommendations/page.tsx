@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Card from '@/components/Card';
+import Button from '@/components/Button';
+import EmptyState from '@/components/EmptyState';
+import RecommendationCard from '@/components/RecommendationCard';
+import JobCard from '@/components/JobCard';
 import { getCurrentProfile } from '@/lib/profileService';
 import { getRecommendations } from '@/lib/recommendationService';
 import { getAllJobs } from '@/lib/jobService';
@@ -96,66 +99,66 @@ export default function RecommendationsPage() {
 
   return (
     <ProtectedRoute>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-2xl font-bold">Your Job Recommendations</h1>
+          <h1 className="text-3xl font-serif font-bold text-gray-900 dark:text-white">Your Job Recommendations</h1>
           
           {hasProfile && (
-            <button
+            <Button
               onClick={handleGenerateRecommendations}
               disabled={isGenerating}
-              className={`inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
-                isGenerating ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            >
-              {isGenerating ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Refresh Recommendations
-                </>
+              isLoading={isGenerating}
+              variant="primary"
+              size="md"
+              leftIcon={!isGenerating && (
+                <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
               )}
-            </button>
+            >
+              {isGenerating ? 'Generating...' : 'Refresh Recommendations'}
+            </Button>
           )}
         </div>
         
         {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="flex justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         ) : !hasProfile ? (
-          <div className="bg-white p-8 rounded-lg shadow-md text-center">
-            <h2 className="text-xl font-semibold mb-4">Complete Your Profile</h2>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 text-center">
+            <div className="mb-6 flex justify-center">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-serif font-semibold mb-4 text-gray-900 dark:text-white">Complete Your Profile</h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               To get personalized job recommendations, you need to create your professional profile first.
               Add your skills, experience, and job preferences to help our AI find the best matches for you.
             </p>
-            <Link
+            <Button
               href="/profile"
-              className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700"
+              variant="primary"
+              size="lg"
             >
               Create Profile
-            </Link>
+            </Button>
           </div>
         ) : error ? (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-6 py-4 rounded-xl">
             <p>{error}</p>
-            <button
+            <Button
               onClick={handleGenerateRecommendations}
-              className="mt-4 text-blue-600 hover:underline"
-              disabled={isGenerating}
+              variant="outline"
+              size="md"
+              className="mt-4"
+              isLoading={isGenerating}
             >
               Try again
-            </button>
+            </Button>
           </div>
         ) : recommendations.length > 0 ? (
           <div className="grid gap-6">
@@ -163,59 +166,41 @@ export default function RecommendationsPage() {
               const matchingJob = findMatchingJob(rec.job, rec.company);
               
               return (
-                <Card
-                  key={index}
-                  title={rec.job}
-                  subtitle={rec.company}
-                  className={matchingJob ? "cursor-pointer hover:shadow-md transition-shadow" : ""}
-                  onClick={matchingJob ? () => router.push(`/jobs/${matchingJob._id}`) : undefined}
-                >
-                  <div className="mt-3">
-                    <h3 className="font-medium text-gray-900">Why it's a match:</h3>
-                    <p className="text-gray-700 mt-1">{rec.reason}</p>
-                  </div>
+                <div key={index} className="space-y-4">
+                  <RecommendationCard
+                    recommendation={rec}
+                    onClick={matchingJob ? () => router.push(`/jobs/${matchingJob._id}`) : undefined}
+                  />
                   
                   {matchingJob && (
-                    <div className="mt-4">
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {matchingJob.skills.slice(0, 5).map((skill) => (
-                          <span
-                            key={skill}
-                            className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                        {matchingJob.skills.length > 5 && (
-                          <span className="text-xs text-gray-500">+{matchingJob.skills.length - 5} more</span>
-                        )}
+                    <div className="ml-6 border-l-2 border-accent-300 dark:border-accent-700 pl-4">
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">
+                        Job Details:
                       </div>
-                      <div className="mt-3 flex justify-between items-center">
-                        <span className="text-sm text-gray-500 capitalize">{matchingJob.jobType}</span>
-                        <span className="text-sm text-gray-500">{matchingJob.location}</span>
-                      </div>
+                      <JobCard
+                        job={matchingJob}
+                        onClick={() => router.push(`/jobs/${matchingJob._id}`)}
+                        showDescription={false}
+                      />
                     </div>
                   )}
-                </Card>
+                </div>
               );
             })}
           </div>
         ) : (
-          <div className="bg-white p-8 rounded-lg shadow-md text-center">
-            <h2 className="text-xl font-semibold mb-4">No Recommendations Yet</h2>
-            <p className="text-gray-600 mb-6">
-              We don't have any job recommendations for you yet. Click the button below to generate your personalized job matches.
-            </p>
-            <button
-              onClick={handleGenerateRecommendations}
-              disabled={isGenerating}
-              className={`inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
-                isGenerating ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            >
-              {isGenerating ? 'Generating...' : 'Generate Recommendations'}
-            </button>
-          </div>
+          <EmptyState
+            title="No Recommendations Yet"
+            message="We don't have any job recommendations for you yet. Click the button below to generate your personalized job matches."
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-accent-600 dark:text-accent-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            }
+            actionLabel={isGenerating ? 'Generating...' : 'Generate Recommendations'}
+            onAction={handleGenerateRecommendations}
+            className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
+          />
         )}
       </div>
     </ProtectedRoute>

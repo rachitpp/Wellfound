@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import FormInput from '@/components/FormInput';
+import Button from '@/components/Button';
 import { register } from '@/lib/authService';
 
 export default function RegisterPage() {
@@ -84,16 +85,19 @@ export default function RegisterPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Create an Account</h1>
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="mb-8 text-center">
+          <h1 className="heading-md mb-2 text-gray-900 dark:text-white">Create an Account</h1>
+          <p className="text-gray-600 dark:text-gray-300">Join our platform to find your perfect job match</p>
+        </div>
         
         {registerError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
             {registerError}
           </div>
         )}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-5">
           <FormInput
             label="Full Name"
             type="text"
@@ -103,17 +107,19 @@ export default function RegisterPage() {
             placeholder="Enter your full name"
             error={errors.name}
             autoComplete="name"
+            helper="How you'll be known on our platform"
           />
           
           <FormInput
-            label="Email"
+            label="Email Address"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder="you@example.com"
             error={errors.email}
             autoComplete="email"
+            helper="We'll never share your email with anyone else"
           />
           
           <FormInput
@@ -122,9 +128,10 @@ export default function RegisterPage() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter your password"
+            placeholder="••••••••••"
             error={errors.password}
             autoComplete="new-password"
+            helper="Minimum 6 characters required"
           />
           
           <FormInput
@@ -133,27 +140,29 @@ export default function RegisterPage() {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm your password"
+            placeholder="••••••••••"
             error={errors.confirmPassword}
             autoComplete="new-password"
           />
           
-          <button
-            type="submit"
-            className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-              isLoading ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Registering...' : 'Register'}
-          </button>
+          <div className="pt-2">
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
+              isLoading={isLoading}
+            >
+              {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+          </div>
         </form>
         
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 dark:text-gray-300">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-blue-600 hover:underline">
-              Login here
+            <Link href="/auth/login" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-300">
+              Sign in
             </Link>
           </p>
         </div>

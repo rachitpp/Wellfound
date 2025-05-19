@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import FormInput from '@/components/FormInput';
 import MultiSelect from '@/components/MultiSelect';
+import Button from '@/components/Button';
 import { getCurrentProfile, createOrUpdateProfile } from '@/lib/profileService';
 
 // List of common skills for the multi-select
@@ -138,28 +139,28 @@ export default function ProfilePage() {
   return (
     <ProtectedRoute>
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <h1 className="text-2xl font-bold text-center mb-6">Your Professional Profile</h1>
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+          <h1 className="text-3xl font-serif font-bold text-center mb-6 text-gray-900 dark:text-white">Your Professional Profile</h1>
           
           {isFetching ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
           ) : (
             <>
               {formError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
                   {formError}
                 </div>
               )}
               
               {formSuccess && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 text-success-700 dark:text-success-400 px-4 py-3 rounded-lg mb-6">
                   {formSuccess}
                 </div>
               )}
               
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <FormInput
                   label="Full Name"
                   type="text"
@@ -168,6 +169,7 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   placeholder="Enter your full name"
                   error={errors.name}
+                  helper="Your name will be displayed on your profile"
                 />
                 
                 <FormInput
@@ -178,6 +180,7 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   placeholder="City, Country"
                   error={errors.location}
+                  helper="Where are you currently based"
                 />
                 
                 <FormInput
@@ -188,6 +191,7 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   min="0"
                   error={errors.yearsOfExperience}
+                  helper="Your total years of professional experience"
                 />
                 
                 <MultiSelect
@@ -196,33 +200,37 @@ export default function ProfilePage() {
                   selectedOptions={formData.skills}
                   onChange={handleSkillsChange}
                   error={errors.skills}
+                  helper="Select all your professional skills (used for job matching)"
                 />
                 
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="mb-5">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                     Preferred Job Type
                   </label>
                   <select
                     name="preferredJobType"
                     value={formData.preferredJobType}
                     onChange={handleChange}
-                    className="px-3 py-2 bg-white border shadow-sm border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-blue-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    className="px-4 py-2.5 bg-white dark:bg-gray-800 border shadow-sm border-gray-300 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 block w-full rounded-lg text-sm focus:ring-1 transition-all duration-300"
                   >
                     <option value="any">Any</option>
                     <option value="remote">Remote</option>
                     <option value="onsite">Onsite</option>
+                    <option value="hybrid">Hybrid</option>
                   </select>
                 </div>
                 
-                <button
-                  type="submit"
-                  className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                    isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                  }`}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Saving...' : 'Save Profile'}
-                </button>
+                <div className="pt-4">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    isLoading={isLoading}
+                  >
+                    {isLoading ? 'Saving...' : 'Save Profile'}
+                  </Button>
+                </div>
               </form>
             </>
           )}

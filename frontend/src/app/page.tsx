@@ -2,33 +2,34 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="space-y-20">
+    <div className="space-y-24">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 text-white py-20 rounded-2xl overflow-hidden">
+      <section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 text-white py-24 rounded-3xl overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
         <div className="container-custom relative z-10">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">
+              <h1 className="heading-xl mb-8 leading-tight">
                 Find Your{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-emerald-100">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-300 to-white/90">
                   Perfect Job
                 </span>{" "}
                 Match with AI
               </h1>
-              <p className="text-xl mb-8 text-indigo-100 max-w-lg mx-auto md:mx-0">
+              <p className="text-xl mb-8 text-white/80 max-w-lg mx-auto md:mx-0 font-light">
                 Our AI-powered platform analyzes your skills and preferences to
                 recommend the best job opportunities tailored just for you.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
                 <Link
                   href="/auth/register"
-                  className="btn-secondary inline-flex items-center justify-center px-6 py-3 text-lg"
+                  className="btn-secondary inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl shadow-lg shadow-accent-600/20 hover:shadow-accent-600/30 transition-all duration-300"
                 >
                   Get Started
                 </Link>
                 <Link
                   href="/jobs"
-                  className="btn-outline bg-white/10 text-white border-white/30 hover:bg-white/20 inline-flex items-center justify-center px-6 py-3 text-lg"
+                  className="btn-outline bg-white/10 text-white border-white/20 hover:bg-white/20 inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl"
                 >
                   Browse Jobs
                 </Link>
@@ -36,9 +37,9 @@ export default function Home() {
             </div>
             <div className="hidden md:block">
               <div className="relative">
-                <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-400 rounded-full filter blur-3xl opacity-30 animate-blob"></div>
-                <div className="absolute top-10 -right-4 w-72 h-72 bg-purple-400 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 right-20 w-72 h-72 bg-emerald-400 rounded-full filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                <div className="absolute -top-20 -right-20 w-64 h-64 bg-accent-400 rounded-full filter blur-3xl opacity-30 animate-pulse-slow"></div>
+                <div className="absolute top-10 -right-4 w-72 h-72 bg-primary-400 rounded-full filter blur-3xl opacity-30 animate-pulse-slow animation-delay-2000"></div>
+                <div className="absolute -bottom-8 right-20 w-72 h-72 bg-success-400 rounded-full filter blur-3xl opacity-30 animate-pulse-slow animation-delay-4000"></div>
                 <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex space-x-2">
@@ -50,30 +51,30 @@ export default function Home() {
                   </div>
                   <div className="space-y-4">
                     <div className="bg-white/5 p-3 rounded-lg">
-                      <div className="text-xs text-indigo-200 mb-1">Skills</div>
+                      <div className="text-xs text-white/70 mb-1">Skills</div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="text-xs bg-indigo-700/50 px-2 py-1 rounded">
+                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
                           React
                         </span>
-                        <span className="text-xs bg-indigo-700/50 px-2 py-1 rounded">
+                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
                           TypeScript
                         </span>
-                        <span className="text-xs bg-indigo-700/50 px-2 py-1 rounded">
+                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
                           Node.js
                         </span>
-                        <span className="text-xs bg-indigo-700/50 px-2 py-1 rounded">
+                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
                           MongoDB
                         </span>
                       </div>
                     </div>
                     <div className="bg-white/5 p-3 rounded-lg">
-                      <div className="text-xs text-indigo-200 mb-1">
+                      <div className="text-xs text-white/70 mb-1">
                         Top Match
                       </div>
                       <div className="text-sm font-medium">
                         Senior Frontend Developer at TechCorp
                       </div>
-                      <div className="text-xs text-indigo-200 mt-1">
+                      <div className="text-xs text-white/70 mt-1">
                         95% match with your profile
                       </div>
                     </div>
@@ -89,24 +90,24 @@ export default function Home() {
       <section className="section">
         <div className="container-custom">
           <div className="text-center mb-16">
-            <div className="inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 rounded-full text-sm font-medium mb-4">
+            <div className="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300 rounded-full text-sm font-medium mb-5">
               How It Works
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="heading-lg text-gray-900 dark:text-white mb-5">
               Find Your Dream Job in Three Simple Steps
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-light">
               Our platform uses advanced AI to match your profile with the
               perfect job opportunities tailored to your skills and preferences.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="card group hover:translate-y-[-8px] p-8">
-              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300">
+            <div className="card group hover:translate-y-[-8px] p-8 transition-all duration-500">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center text-white mb-7 shadow-lg shadow-primary-500/20 group-hover:shadow-primary-500/30 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-7 w-7"
+                  className="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -119,7 +120,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200">
+              <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                 Create Your Profile
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
@@ -129,11 +130,11 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="card group hover:translate-y-[-8px] p-8">
-              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300">
+            <div className="card group hover:translate-y-[-8px] p-8 transition-all duration-500">
+              <div className="w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-600 rounded-2xl flex items-center justify-center text-white mb-7 shadow-lg shadow-accent-500/20 group-hover:shadow-accent-500/30 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-7 w-7"
+                  className="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -146,7 +147,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200">
+              <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors duration-300">
                 Browse Job Listings
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
@@ -156,11 +157,11 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="card group hover:translate-y-[-8px] p-8">
-              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300">
+            <div className="card group hover:translate-y-[-8px] p-8 transition-all duration-500">
+              <div className="w-16 h-16 bg-gradient-to-br from-success-500 to-success-600 rounded-2xl flex items-center justify-center text-white mb-7 shadow-lg shadow-success-500/20 group-hover:shadow-success-500/30 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-7 w-7"
+                  className="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -173,7 +174,7 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200">
+              <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-success-600 dark:group-hover:text-success-400 transition-colors duration-300">
                 Get AI Recommendations
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
@@ -187,32 +188,32 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl">
+      <section className="py-16 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-3xl shadow-inner">
         <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="space-y-2">
-              <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+            <div className="space-y-3">
+              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
                 10k+
               </div>
-              <p className="text-gray-600 dark:text-gray-300">Active Users</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">Active Users</p>
             </div>
-            <div className="space-y-2">
-              <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div className="space-y-3">
+              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
                 5k+
               </div>
-              <p className="text-gray-600 dark:text-gray-300">Job Listings</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">Job Listings</p>
             </div>
-            <div className="space-y-2">
-              <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div className="space-y-3">
+              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
                 95%
               </div>
-              <p className="text-gray-600 dark:text-gray-300">Match Accuracy</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">Match Accuracy</p>
             </div>
-            <div className="space-y-2">
-              <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div className="space-y-3">
+              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
                 3k+
               </div>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600 dark:text-gray-300 font-medium">
                 Successful Hires
               </p>
             </div>
@@ -221,28 +222,28 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative overflow-hidden rounded-2xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 opacity-90"></div>
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-20"></div>
+      <section className="relative overflow-hidden rounded-3xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-700 opacity-90"></div>
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
 
-        <div className="container-custom relative z-10 py-16 md:py-20 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+        <div className="container-custom relative z-10 py-20 md:py-24 text-center">
+          <h2 className="heading-lg text-white mb-6">
             Ready to find your dream job?
           </h2>
-          <p className="text-indigo-100 mb-8 max-w-2xl mx-auto text-lg">
+          <p className="text-white/80 mb-10 max-w-2xl mx-auto text-lg font-light">
             Join thousands of professionals who have found their perfect career
             match through our AI-powered platform.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
             <Link
               href="/auth/register"
-              className="btn-secondary inline-flex items-center justify-center px-8 py-3 text-lg"
+              className="btn-secondary inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl shadow-lg shadow-accent-600/20 hover:shadow-accent-600/30 transition-all duration-300"
             >
               Sign Up Now
             </Link>
             <Link
               href="/jobs"
-              className="btn-outline bg-white/10 text-white border-white/30 hover:bg-white/20 inline-flex items-center justify-center px-8 py-3 text-lg"
+              className="btn-outline bg-white/10 text-white border-white/20 hover:bg-white/20 inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl"
             >
               Browse Jobs
             </Link>

@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import Card from '@/components/Card';
+import Button from '@/components/Button';
+import JobCard from '@/components/JobCard';
+import EmptyState from '@/components/EmptyState';
 import { getAllJobs } from '@/lib/jobService';
 import { Job } from '@/lib/jobService';
 
@@ -88,11 +90,11 @@ export default function JobsPage() {
 
   return (
     <ProtectedRoute>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Job Listings</h1>
+      <div className="space-y-8">
+        <h1 className="text-3xl font-serif font-bold text-gray-900 dark:text-white">Job Listings</h1>
         
         {/* Search and filters */}
-        <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-5">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <input
@@ -100,15 +102,15 @@ export default function JobsPage() {
                 placeholder="Search jobs, companies, or skills..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-3">
               <select
                 value={selectedJobType}
                 onChange={handleJobTypeChange}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="all">All Job Types</option>
                 <option value="remote">Remote</option>
@@ -119,7 +121,7 @@ export default function JobsPage() {
               <select
                 value={selectedSkill}
                 onChange={handleSkillChange}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">All Skills</option>
                 {allSkills.map(skill => (
@@ -127,64 +129,49 @@ export default function JobsPage() {
                 ))}
               </select>
               
-              <button
+              <Button
                 onClick={handleClearFilters}
-                className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100"
+                variant="outline"
+                size="md"
               >
                 Clear Filters
-              </button>
+              </Button>
             </div>
           </div>
           
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
             {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'} found
           </div>
         </div>
         
         {/* Job listings */}
         {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="flex justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
         ) : filteredJobs.length > 0 ? (
           <div className="grid gap-6">
             {filteredJobs.map((job) => (
-              <Card
+              <JobCard
                 key={job._id}
-                title={job.title}
-                subtitle={`${job.company} • ${job.location}`}
-                className="cursor-pointer hover:shadow-md transition-shadow"
+                job={job}
                 onClick={() => router.push(`/jobs/${job._id}`)}
-              >
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {job.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <span className="text-sm text-gray-500 capitalize">{job.jobType}</span>
-                  <span className="text-sm text-gray-500">
-                    Posted: {new Date(job.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </Card>
+                showDescription={true}
+              />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No jobs found matching your criteria.</p>
-            <button
-              onClick={handleClearFilters}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Clear Filters
-            </button>
-          </div>
+          <EmptyState
+            title="No matching jobs"
+            message="No jobs found matching your criteria."
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            }
+            actionLabel="Clear Filters"
+            onAction={handleClearFilters}
+          />
         )}
       </div>
     </ProtectedRoute>

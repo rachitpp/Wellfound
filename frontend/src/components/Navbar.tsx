@@ -26,12 +26,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
+    <nav className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white sticky top-0 z-50 backdrop-blur-sm bg-white/90 dark:bg-gray-900/90">
       <div className="container-custom">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-indigo-400 text-transparent bg-clip-text">
+              <span className="text-xl font-serif font-bold bg-gradient-to-r from-primary-600 to-accent-600 text-transparent bg-clip-text">
                 JobMatch
               </span>
             </Link>
@@ -43,47 +43,47 @@ const Navbar = () => {
               <>
                 <Link
                   href="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
                     pathname === "/dashboard"
-                      ? "text-indigo-600 dark:text-indigo-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/jobs"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
                     pathname === "/jobs"
-                      ? "text-indigo-600 dark:text-indigo-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   }`}
                 >
                   Jobs
                 </Link>
                 <Link
                   href="/profile"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
                     pathname === "/profile"
-                      ? "text-indigo-600 dark:text-indigo-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   }`}
                 >
                   Profile
                 </Link>
                 <Link
                   href="/recommendations"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
                     pathname === "/recommendations"
-                      ? "text-indigo-600 dark:text-indigo-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   }`}
                 >
                   Recommendations
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="ml-2 px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+                  className="ml-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow"
                 >
                   Logout
                 </button>
@@ -92,17 +92,17 @@ const Navbar = () => {
               <>
                 <Link
                   href="/auth/login"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
                     pathname === "/auth/login"
-                      ? "text-indigo-600 dark:text-indigo-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   }`}
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="ml-2 px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+                  className="ml-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow"
                 >
                   Register
                 </Link>
@@ -114,7 +114,7 @@ const Navbar = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-200"
+              className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-300"
             >
               <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
@@ -163,10 +163,10 @@ const Navbar = () => {
               <>
                 <Link
                   href="/dashboard"
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
                     pathname === "/dashboard"
-                      ? "text-indigo-600 dark:text-indigo-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -174,10 +174,10 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/jobs"
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
                     pathname === "/jobs"
-                      ? "text-indigo-600 dark:text-indigo-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -185,10 +185,10 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/profile"
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
                     pathname === "/profile"
-                      ? "text-indigo-600 dark:text-indigo-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -196,10 +196,10 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/recommendations"
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
                     pathname === "/recommendations"
-                      ? "text-indigo-600 dark:text-indigo-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -210,7 +210,7 @@ const Navbar = () => {
                     handleLogout();
                     toggleMenu();
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200 mt-2"
+                  className="block w-full text-left px-3 py-2 rounded-lg text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow mt-2"
                 >
                   Logout
                 </button>
@@ -219,10 +219,10 @@ const Navbar = () => {
               <>
                 <Link
                   href="/auth/login"
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
                     pathname === "/auth/login"
-                      ? "text-indigo-600 dark:text-indigo-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -230,7 +230,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200 mt-2"
+                  className="block w-full text-center px-3 py-2 rounded-lg text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow mt-2"
                   onClick={toggleMenu}
                 >
                   Register

@@ -1,41 +1,44 @@
-"use client";
+'use client';
 
-import React from "react";
+import React, { ReactNode } from 'react';
 
 interface CardProps {
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  footer?: React.ReactNode;
+  children: ReactNode;
   className?: string;
+  hover?: boolean;
+  bordered?: boolean;
+  raised?: boolean;
   onClick?: () => void;
 }
 
 const Card: React.FC<CardProps> = ({
-  title,
-  subtitle,
   children,
-  footer,
-  className = "",
+  className = '',
+  hover = false,
+  bordered = true,
+  raised = false,
   onClick,
 }) => {
+  const baseClasses = 'bg-white dark:bg-gray-800 rounded-xl overflow-hidden transition-all duration-300';
+  
+  const hoverClasses = hover 
+    ? 'hover:translate-y-[-8px] hover:shadow-md cursor-pointer' 
+    : '';
+  
+  const borderClasses = bordered 
+    ? 'border border-gray-200 dark:border-gray-700' 
+    : '';
+  
+  const shadowClasses = raised 
+    ? 'shadow-md' 
+    : 'shadow-sm';
+  
   return (
-    <div
-      className={`bg-white rounded-lg shadow-md overflow-hidden ${className} ${
-        onClick ? "cursor-pointer hover:shadow-lg transition-shadow" : ""
-      }`}
+    <div 
+      className={`${baseClasses} ${hoverClasses} ${borderClasses} ${shadowClasses} ${className}`}
       onClick={onClick}
     >
-      <div className="p-5">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
-        <div className="mt-4">{children}</div>
-      </div>
-      {footer && (
-        <div className="px-5 py-3 bg-gray-50 border-t border-gray-200">
-          {footer}
-        </div>
-      )}
+      {children}
     </div>
   );
 };

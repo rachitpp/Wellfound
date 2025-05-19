@@ -2,13 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --primary: #4f46e5;
-  --primary-light: #6366f1;
-  --primary-dark: #4338ca;
-  --secondary: #10b981;
-  --secondary-light: #34d399;
-  --secondary-dark: #059669;
+  --primary: #a4917d;
+  --primary-light: #baa898;
+  --primary-dark: #7d6a59;
+  --accent: #7fa3a3;
+  --accent-light: #9ebfbf;
+  --accent-dark: #648383;
   --background: #ffffff;
   --foreground: #171717;
   --surface: #f9fafb;
@@ -18,24 +20,24 @@
   --text-secondary: #4b5563;
   --text-tertiary: #6b7280;
   --error: #ef4444;
-  --success: #10b981;
+  --success: #6aaa6a;
   --warning: #f59e0b;
-  --info: #3b82f6;
+  --info: #7fa3a3;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #6366f1;
-    --primary-light: #818cf8;
-    --primary-dark: #4f46e5;
-    --secondary: #10b981;
-    --secondary-light: #34d399;
-    --secondary-dark: #059669;
-    --background: #0f172a;
+    --primary: #a4917d;
+    --primary-light: #baa898;
+    --primary-dark: #7d6a59;
+    --accent: #7fa3a3;
+    --accent-light: #9ebfbf;
+    --accent-dark: #648383;
+    --background: #1a1a1a;
     --foreground: #f1f5f9;
-    --surface: #1e293b;
-    --surface-2: #334155;
-    --surface-3: #475569;
+    --surface: #262626;
+    --surface-2: #333333;
+    --surface-3: #404040;
     --text-primary: #f1f5f9;
     --text-secondary: #cbd5e1;
     --text-tertiary: #94a3b8;
@@ -52,27 +54,28 @@ body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   line-height: 1.6;
+  letter-spacing: -0.011em;
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out shadow-sm;
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out shadow-sm;
   }
 
   .btn-secondary {
-    @apply bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out shadow-sm;
+    @apply bg-accent-600 hover:bg-accent-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out shadow-sm;
   }
 
   .btn-outline {
-    @apply border border-gray-300 hover:border-gray-400 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out;
+    @apply border border-gray-300 hover:border-gray-400 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out;
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-200 hover:shadow-md;
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md;
   }
 
   .input {
-    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 outline-none transition-all duration-200;
+    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all duration-300;
   }
 
   .container-custom {
@@ -80,6 +83,18 @@ body {
   }
 
   .section {
-    @apply py-12 md:py-16;
+    @apply py-12 md:py-20;
+  }
+
+  .heading-xl {
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight;
+  }
+
+  .heading-lg {
+    @apply font-serif text-3xl md:text-4xl font-bold;
+  }
+
+  .heading-md {
+    @apply font-serif text-2xl md:text-3xl font-bold;
   }
 }

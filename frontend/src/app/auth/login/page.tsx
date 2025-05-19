@@ -70,23 +70,26 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Login to Your Account</h1>
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="mb-8 text-center">
+          <h1 className="heading-md mb-2 text-gray-900 dark:text-white">Welcome Back</h1>
+          <p className="text-gray-600 dark:text-gray-300">Enter your credentials to access your account</p>
+        </div>
         
         {loginError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
             {loginError}
           </div>
         )}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-5">
           <FormInput
-            label="Email"
+            label="Email Address"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder="you@example.com"
             error={errors.email}
             autoComplete="email"
           />
@@ -97,27 +100,29 @@ export default function LoginPage() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter your password"
+            placeholder="••••••••••"
             error={errors.password}
             autoComplete="current-password"
           />
           
-          <button
-            type="submit"
-            className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-              isLoading ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              className={`w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300 shadow-sm hover:shadow ${
+                isLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </div>
         </form>
         
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 dark:text-gray-300">
             Don't have an account?{' '}
-            <Link href="/auth/register" className="text-blue-600 hover:underline">
-              Register here
+            <Link href="/auth/register" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-300">
+              Create account
             </Link>
           </p>
         </div>
