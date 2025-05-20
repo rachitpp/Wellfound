@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import ProtectedRoute from '@/components/ProtectedRoute';
 import FormInput from '@/components/FormInput';
 import MultiSelect from '@/components/MultiSelect';
 import Button from '@/components/Button';
 import { getCurrentProfile, createOrUpdateProfile } from '@/lib/profileService';
+import { isAuthenticated } from '@/lib/authService';
 
 // List of common skills for the multi-select
 const SKILLS_OPTIONS = [
@@ -34,8 +34,16 @@ export default function ProfilePage() {
   const [isFetching, setIsFetching] = useState(true);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   useEffect(() => {
+    // Check authentication first
+    if (!isAuthenticated()) {
+      router.push('/auth/login');
+      return;
+    }
+    setIsAuthChecking(false);
+    
     const fetchProfile = async () => {
       try {
         const profile = await getCurrentProfile();
@@ -56,7 +64,7 @@ export default function ProfilePage() {
     };
 
     fetchProfile();
-  }, []);
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -136,106 +144,113 @@ export default function ProfilePage() {
     }
   };
 
-  return (
-    <ProtectedRoute>
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
-          <h1 className="text-3xl font-serif font-bold text-center mb-6 text-gray-900 dark:text-white">Your Professional Profile</h1>
-          
-          {isFetching ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-            </div>
-          ) : (
-            <>
-              {formError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
-                  {formError}
-                </div>
-              )}
-              
-              {formSuccess && (
-                <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 text-success-700 dark:text-success-400 px-4 py-3 rounded-lg mb-6">
-                  {formSuccess}
-                </div>
-              )}
-              
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <FormInput
-                  label="Full Name"
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  error={errors.name}
-                  helper="Your name will be displayed on your profile"
-                />
-                
-                <FormInput
-                  label="Location"
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  placeholder="City, Country"
-                  error={errors.location}
-                  helper="Where are you currently based"
-                />
-                
-                <FormInput
-                  label="Years of Experience"
-                  type="number"
-                  name="yearsOfExperience"
-                  value={formData.yearsOfExperience.toString()}
-                  onChange={handleChange}
-                  min="0"
-                  error={errors.yearsOfExperience}
-                  helper="Your total years of professional experience"
-                />
-                
-                <MultiSelect
-                  label="Skills"
-                  options={SKILLS_OPTIONS}
-                  selectedOptions={formData.skills}
-                  onChange={handleSkillsChange}
-                  error={errors.skills}
-                  helper="Select all your professional skills (used for job matching)"
-                />
-                
-                <div className="mb-5">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    Preferred Job Type
-                  </label>
-                  <select
-                    name="preferredJobType"
-                    value={formData.preferredJobType}
-                    onChange={handleChange}
-                    className="px-4 py-2.5 bg-white dark:bg-gray-800 border shadow-sm border-gray-300 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 block w-full rounded-lg text-sm focus:ring-1 transition-all duration-300"
-                  >
-                    <option value="any">Any</option>
-                    <option value="remote">Remote</option>
-                    <option value="onsite">Onsite</option>
-                    <option value="hybrid">Hybrid</option>
-                  </select>
-                </div>
-                
-                <div className="pt-4">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                    isLoading={isLoading}
-                  >
-                    {isLoading ? 'Saving...' : 'Save Profile'}
-                  </Button>
-                </div>
-              </form>
-            </>
-          )}
-        </div>
+  // Show loading spinner while checking authentication
+  if (isAuthChecking) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    </ProtectedRoute>
+    );
+  }
+  
+  return (
+    <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white dark:bg-gray-800 shadow-subtle border border-gray-100 dark:border-gray-700 rounded-xl p-5 md:p-6">
+        <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 dark:text-white mb-4">
+          Profile Information
+        </h1>
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-6">
+          Complete your profile to get personalized job recommendations
+        </p>
+        {isFetching ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
+          </div>
+        ) : (
+          <>
+            {formError && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-3 py-2 text-sm rounded-lg mb-4">
+                {formError}
+              </div>
+            )}
+            
+            {formSuccess && (
+              <div className="bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 text-success-700 dark:text-success-400 px-3 py-2 text-sm rounded-lg mb-4">
+                {formSuccess}
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <FormInput
+                label="Full Name"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                error={errors.name}
+              />
+              
+              <FormInput
+                label="Location"
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="City, Country"
+                error={errors.location}
+              />
+              
+              <FormInput
+                label="Years of Experience"
+                type="number"
+                name="yearsOfExperience"
+                value={formData.yearsOfExperience.toString()}
+                onChange={handleChange}
+                min="0"
+                error={errors.yearsOfExperience}
+              />
+              
+              <MultiSelect
+                label="Skills"
+                options={SKILLS_OPTIONS}
+                selectedOptions={formData.skills}
+                onChange={handleSkillsChange}
+                error={errors.skills}
+              />
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Preferred Job Type
+                </label>
+                <select
+                  name="preferredJobType"
+                  value={formData.preferredJobType}
+                  onChange={handleChange}
+                  className="px-3 py-2 bg-white dark:bg-gray-800 border shadow-sm border-gray-300 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-400 dark:focus:border-primary-400 block w-full rounded-lg text-sm focus:ring-1 transition-all duration-300"
+                >
+                  <option value="any">Any</option>
+                  <option value="remote">Remote</option>
+                  <option value="onsite">Onsite</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+              
+              <div className="pt-3">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  isLoading={isLoading}
+                >
+                  {isLoading ? 'Saving...' : 'Save Profile'}
+                </Button>
+              </div>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

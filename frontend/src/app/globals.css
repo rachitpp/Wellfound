@@ -2,45 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap");
 
 :root {
-  --primary: #a4917d;
-  --primary-light: #baa898;
-  --primary-dark: #7d6a59;
-  --accent: #7fa3a3;
-  --accent-light: #9ebfbf;
-  --accent-dark: #648383;
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --accent: #f43f5e;
+  --accent-light: #fb7185;
+  --accent-dark: #e11d48;
   --background: #ffffff;
   --foreground: #171717;
-  --surface: #f9fafb;
-  --surface-2: #f3f4f6;
-  --surface-3: #e5e7eb;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-tertiary: #6b7280;
+  --surface: #f5f7ff;
+  --surface-2: #fff1f3;
+  --surface-3: #eef2ff;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-tertiary: #64748b;
   --error: #ef4444;
-  --success: #6aaa6a;
+  --success: #10b981;
   --warning: #f59e0b;
-  --info: #7fa3a3;
+  --info: #0ea5e9;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary: #a4917d;
-    --primary-light: #baa898;
-    --primary-dark: #7d6a59;
-    --accent: #7fa3a3;
-    --accent-light: #9ebfbf;
-    --accent-dark: #648383;
-    --background: #1a1a1a;
-    --foreground: #f1f5f9;
-    --surface: #262626;
-    --surface-2: #333333;
-    --surface-3: #404040;
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --text-tertiary: #94a3b8;
+    --primary: #818cf8;
+    --primary-light: #a5b4fc;
+    --primary-dark: #6366f1;
+    --accent: #fb7185;
+    --accent-light: #fda4af;
+    --accent-dark: #f43f5e;
+    --background: #0f1729;
+    --foreground: #f8fafc;
+    --surface: #1e293b;
+    --surface-2: #334155;
+    --surface-3: #1e1e2c;
+    --text-primary: #f8fafc;
+    --text-secondary: #e2e8f0;
+    --text-tertiary: #cbd5e1;
   }
 }
 
@@ -51,31 +51,31 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  font-family: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  line-height: 1.6;
+  line-height: 1.7;
   letter-spacing: -0.011em;
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out shadow-sm;
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-300 ease-in-out shadow-sm hover:shadow-primary-500/30;
   }
 
   .btn-secondary {
-    @apply bg-accent-600 hover:bg-accent-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out shadow-sm;
+    @apply bg-accent-600 hover:bg-accent-700 text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-300 ease-in-out shadow-sm hover:shadow-accent-500/30;
   }
 
   .btn-outline {
-    @apply border border-gray-300 hover:border-gray-400 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out;
+    @apply border border-gray-300 hover:border-gray-400 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium py-2.5 px-5 rounded-xl transition-all duration-300 ease-in-out;
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-md;
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 dark:hover:border-gray-600;
   }
 
   .input {
-    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all duration-300;
+    @apply w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all duration-300;
   }
 
   .container-custom {
@@ -83,7 +83,7 @@ body {
   }
 
   .section {
-    @apply py-12 md:py-20;
+    @apply py-16 md:py-24;
   }
 
   .heading-xl {
@@ -96,5 +96,17 @@ body {
 
   .heading-md {
     @apply font-serif text-2xl md:text-3xl font-bold;
+  }
+
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600;
+  }
+
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-2 hover:shadow-xl transition-all duration-300;
   }
 }

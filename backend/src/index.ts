@@ -2,10 +2,17 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/auth";
 import profileRoutes from "./routes/profile";
 import jobRoutes from "./routes/job";
 import recommendRoutes from "./routes/recommend";
+import savedJobRoutes from "./routes/savedJobRoutes";
+import applicationRoutes from "./routes/applicationRoutes";
+
+// Import Redis client (this initializes the connection)
+import './utils/redis';
 
 // Load environment variables
 dotenv.config();
@@ -39,6 +46,22 @@ app.use(
     credentials: true,
   }),
 );
+// Apply helmet middleware for security headers
+app.use(helmet());
+
+// Rate limiting middleware to prevent abuse and DDoS
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+// Apply rate limiter to all requests
+app.use(limiter);
+
+// Parse JSON bodies
 app.use(express.json());
 
 // Connect to MongoDB
@@ -52,6 +75,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/recommend", recommendRoutes);
+app.use("/api/saved-jobs", savedJobRoutes);
+app.use("/api/applications", applicationRoutes);
 
 // Health check route
 app.get("/health", (req, res) => {

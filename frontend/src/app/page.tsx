@@ -2,45 +2,52 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="space-y-24">
+    <div className="space-y-32">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 text-white py-24 rounded-3xl overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
+      <section className="relative py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 -z-10"></div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 right-0 h-96 overflow-hidden -z-10">
+          <div className="absolute -top-10 -left-10 w-72 h-72 bg-primary-300 dark:bg-primary-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute top-20 right-10 w-80 h-80 bg-accent-300 dark:bg-accent-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-20 left-1/3 w-96 h-96 bg-primary-200 dark:bg-primary-800 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        </div>
+
         <div className="container-custom relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="text-center md:text-left">
-              <h1 className="heading-xl mb-8 leading-tight">
-                Find Your{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-300 to-white/90">
-                  Perfect Job
-                </span>{" "}
-                Match with AI
-              </h1>
-              <p className="text-xl mb-8 text-white/80 max-w-lg mx-auto md:mx-0 font-light">
-                Our AI-powered platform analyzes your skills and preferences to
-                recommend the best job opportunities tailored just for you.
-              </p>
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
-                <Link
-                  href="/auth/register"
-                  className="btn-secondary inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl shadow-lg shadow-accent-600/20 hover:shadow-accent-600/30 transition-all duration-300"
-                >
-                  Get Started
-                </Link>
-                <Link
-                  href="/jobs"
-                  className="btn-outline bg-white/10 text-white border-white/20 hover:bg-white/20 inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl"
-                >
-                  Browse Jobs
-                </Link>
+              <div className="animate-fade-in">
+                <span className="inline-block px-4 py-1.5 mb-5 text-sm font-medium rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
+                  AI-Powered Job Matching
+                </span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight leading-tight text-gray-900 dark:text-white">
+                  Find Your <span className="gradient-text">Perfect Job</span>{" "}
+                  Match
+                </h1>
+                <p className="text-xl mb-8 text-gray-600 dark:text-gray-300 max-w-lg mx-auto md:mx-0 font-light leading-relaxed">
+                  Our AI-powered platform analyzes your skills and preferences
+                  to recommend job opportunities tailored specifically for you.
+                </p>
+                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+                  <Link
+                    href="/auth/register"
+                    className="btn-secondary inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Get Started
+                  </Link>
+                  <Link
+                    href="/jobs"
+                    className="btn-outline bg-white/90 dark:bg-transparent text-gray-800 dark:text-white border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl"
+                  >
+                    Browse Jobs
+                  </Link>
+                </div>
               </div>
             </div>
             <div className="hidden md:block">
-              <div className="relative">
-                <div className="absolute -top-20 -right-20 w-64 h-64 bg-accent-400 rounded-full filter blur-3xl opacity-30 animate-pulse-slow"></div>
-                <div className="absolute top-10 -right-4 w-72 h-72 bg-primary-400 rounded-full filter blur-3xl opacity-30 animate-pulse-slow animation-delay-2000"></div>
-                <div className="absolute -bottom-8 right-20 w-72 h-72 bg-success-400 rounded-full filter blur-3xl opacity-30 animate-pulse-slow animation-delay-4000"></div>
-                <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl">
+              <div className="relative animate-float">
+                <div className="glass-effect rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex space-x-2">
                       <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -50,32 +57,49 @@ export default function Home() {
                     <div className="text-xs text-white/70">AI Job Matcher</div>
                   </div>
                   <div className="space-y-4">
-                    <div className="bg-white/5 p-3 rounded-lg">
-                      <div className="text-xs text-white/70 mb-1">Skills</div>
+                    <div className="bg-white/10 p-4 rounded-xl">
+                      <div className="text-xs text-white/70 mb-2">Skills</div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
+                        <span className="text-xs bg-primary-600/80 px-2 py-1 rounded-lg text-white">
                           React
                         </span>
-                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
+                        <span className="text-xs bg-primary-600/80 px-2 py-1 rounded-lg text-white">
                           TypeScript
                         </span>
-                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
+                        <span className="text-xs bg-primary-600/80 px-2 py-1 rounded-lg text-white">
                           Node.js
                         </span>
-                        <span className="text-xs bg-accent-600/50 px-2 py-1 rounded-lg">
+                        <span className="text-xs bg-primary-600/80 px-2 py-1 rounded-lg text-white">
                           MongoDB
                         </span>
                       </div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg">
-                      <div className="text-xs text-white/70 mb-1">
+                    <div className="bg-white/10 p-4 rounded-xl">
+                      <div className="text-xs text-white/70 mb-2">
                         Top Match
                       </div>
-                      <div className="text-sm font-medium">
+                      <div className="text-base font-medium text-white">
                         Senior Frontend Developer at TechCorp
                       </div>
-                      <div className="text-xs text-white/70 mt-1">
-                        95% match with your profile
+                      <div className="flex items-center mt-2">
+                        <div className="flex-1 bg-white/20 h-2 rounded-full overflow-hidden">
+                          <div
+                            className="bg-accent-500 h-full rounded-full"
+                            style={{ width: "95%" }}
+                          ></div>
+                        </div>
+                        <span className="text-xs text-white ml-2">95%</span>
+                      </div>
+                    </div>
+                    <div className="bg-white/10 p-4 rounded-xl">
+                      <div className="text-xs text-white/70 mb-2">
+                        Location Preference
+                      </div>
+                      <div className="text-sm text-white flex items-center gap-2">
+                        <span className="w-2 h-2 bg-accent-500 rounded-full"></span>
+                        Remote
+                        <span className="w-2 h-2 bg-primary-500 rounded-full ml-2"></span>
+                        San Francisco
                       </div>
                     </div>
                   </div>
@@ -89,8 +113,8 @@ export default function Home() {
       {/* Features Section */}
       <section className="section">
         <div className="container-custom">
-          <div className="text-center mb-16">
-            <div className="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300 rounded-full text-sm font-medium mb-5">
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <div className="inline-block px-4 py-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium mb-5">
               How It Works
             </div>
             <h2 className="heading-lg text-gray-900 dark:text-white mb-5">
@@ -102,12 +126,12 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="card group hover:translate-y-[-8px] p-8 transition-all duration-500">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center text-white mb-7 shadow-lg shadow-primary-500/20 group-hover:shadow-primary-500/30 transition-all duration-300">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-6 md:gap-8">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-subtle hover:shadow-elevated p-5 sm:p-6 md:p-8 border border-gray-100 dark:border-gray-700 card-hover">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center text-white mb-4 sm:mb-5 md:mb-7 shadow-lg shadow-primary-500/20 group-hover:shadow-primary-500/30 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -120,21 +144,21 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+              <h3 className="text-base sm:text-lg md:text-xl font-serif font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
                 Create Your Profile
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300">
                 Sign up and build your professional profile with your skills,
                 experience, and job preferences. The more detailed your profile,
                 the better our AI can match you.
               </p>
             </div>
 
-            <div className="card group hover:translate-y-[-8px] p-8 transition-all duration-500">
-              <div className="w-16 h-16 bg-gradient-to-br from-accent-500 to-accent-600 rounded-2xl flex items-center justify-center text-white mb-7 shadow-lg shadow-accent-500/20 group-hover:shadow-accent-500/30 transition-all duration-300">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-subtle hover:shadow-elevated p-5 sm:p-6 md:p-8 border border-gray-100 dark:border-gray-700 card-hover">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center text-white mb-4 sm:mb-5 md:mb-7 shadow-lg shadow-accent-500/20 group-hover:shadow-accent-500/30 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -147,21 +171,21 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors duration-300">
+              <h3 className="text-base sm:text-lg md:text-xl font-serif font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-white group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors duration-300">
                 Browse Job Listings
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300">
                 Explore our curated job listings from top companies across
                 various industries and locations. Filter by skills, experience
                 level, and job type.
               </p>
             </div>
 
-            <div className="card group hover:translate-y-[-8px] p-8 transition-all duration-500">
-              <div className="w-16 h-16 bg-gradient-to-br from-success-500 to-success-600 rounded-2xl flex items-center justify-center text-white mb-7 shadow-lg shadow-success-500/20 group-hover:shadow-success-500/30 transition-all duration-300">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-subtle hover:shadow-elevated p-5 sm:p-6 md:p-8 border border-gray-100 dark:border-gray-700 card-hover">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-success-500 to-success-600 rounded-xl flex items-center justify-center text-white mb-4 sm:mb-5 md:mb-7 shadow-lg shadow-success-500/20 group-hover:shadow-success-500/30 transition-all duration-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
+                  className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -174,10 +198,10 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-success-600 dark:group-hover:text-success-400 transition-colors duration-300">
+              <h3 className="text-base sm:text-lg md:text-xl font-serif font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-white group-hover:text-success-600 dark:group-hover:text-success-400 transition-colors duration-300">
                 Get AI Recommendations
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300">
                 Our AI analyzes your profile and suggests the best job matches
                 with personalized reasons for each recommendation, helping you
                 find the perfect fit.
@@ -188,29 +212,35 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-3xl shadow-inner">
+      <section className="py-16 bg-gradient-to-r from-gray-50 to-primary-50 dark:from-gray-900 dark:to-gray-800 rounded-3xl shadow-inner">
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
             <div className="space-y-3">
-              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
+              <div className="text-5xl font-serif font-bold gradient-text">
                 10k+
               </div>
-              <p className="text-gray-600 dark:text-gray-300 font-medium">Active Users</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">
+                Active Users
+              </p>
             </div>
             <div className="space-y-3">
-              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
+              <div className="text-5xl font-serif font-bold gradient-text">
                 5k+
               </div>
-              <p className="text-gray-600 dark:text-gray-300 font-medium">Job Listings</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">
+                Job Listings
+              </p>
             </div>
             <div className="space-y-3">
-              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
+              <div className="text-5xl font-serif font-bold gradient-text">
                 95%
               </div>
-              <p className="text-gray-600 dark:text-gray-300 font-medium">Match Accuracy</p>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">
+                Match Accuracy
+              </p>
             </div>
             <div className="space-y-3">
-              <div className="text-5xl font-serif font-bold text-primary-600 dark:text-primary-400">
+              <div className="text-5xl font-serif font-bold gradient-text">
                 3k+
               </div>
               <p className="text-gray-600 dark:text-gray-300 font-medium">
@@ -222,28 +252,27 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-700 opacity-90"></div>
+      <section className="relative overflow-hidden rounded-2xl mb-16">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-700 opacity-95"></div>
         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
 
-        <div className="container-custom relative z-10 py-20 md:py-24 text-center">
-          <h2 className="heading-lg text-white mb-6">
+        <div className="container-custom relative z-10 py-8 sm:py-10 md:py-14 text-center">
+          <h2 className="text-2xl sm:text-2xl md:text-3xl font-serif font-bold text-white mb-2 sm:mb-3">
             Ready to find your dream job?
           </h2>
-          <p className="text-white/80 mb-10 max-w-2xl mx-auto text-lg font-light">
-            Join thousands of professionals who have found their perfect career
-            match through our AI-powered platform.
+          <p className="text-white/90 mb-4 sm:mb-5 md:mb-6 max-w-xl mx-auto text-sm sm:text-base font-light">
+            Join thousands of professionals who have found their perfect career match through our AI-powered platform.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+          <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
             <Link
               href="/auth/register"
-              className="btn-secondary inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl shadow-lg shadow-accent-600/20 hover:shadow-accent-600/30 transition-all duration-300"
+              className="bg-white text-primary-700 hover:bg-gray-100 inline-flex items-center justify-center px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 text-sm rounded-lg shadow-md hover:shadow-white/20 transition-all duration-300 font-medium"
             >
               Sign Up Now
             </Link>
             <Link
               href="/jobs"
-              className="btn-outline bg-white/10 text-white border-white/20 hover:bg-white/20 inline-flex items-center justify-center px-8 py-3.5 text-lg rounded-xl"
+              className="glass-effect text-white inline-flex items-center justify-center px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 text-sm rounded-lg hover:bg-white/20 transition-all duration-300 font-medium"
             >
               Browse Jobs
             </Link>

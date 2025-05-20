@@ -8,12 +8,26 @@ import { isAuthenticated, logout } from "@/lib/authService";
 const Navbar = () => {
   const [isAuth, setIsAuth] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     setIsAuth(isAuthenticated());
   }, [pathname]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -26,64 +40,80 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 text-gray-900 dark:text-white sticky top-0 z-50 backdrop-blur-sm bg-white/90 dark:bg-gray-900/90">
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/90 dark:bg-gray-900/90 shadow-subtle backdrop-blur-md"
+          : "bg-transparent dark:bg-transparent"
+      }`}
+    >
       <div className="container-custom">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-16 md:h-18">
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-serif font-bold bg-gradient-to-r from-primary-600 to-accent-600 text-transparent bg-clip-text">
+            <Link href="/" className="flex-shrink-0 flex items-center group">
+              <span className="text-xl md:text-2xl font-serif font-bold gradient-text group-hover:opacity-90 transition-opacity">
                 JobMatch
               </span>
             </Link>
           </div>
 
           {/* Desktop menu */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-0.5 lg:space-x-1">
             {isAuth ? (
               <>
                 <Link
                   href="/dashboard"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                     pathname === "/dashboard"
-                      ? "text-primary-600 dark:text-primary-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/jobs"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
-                    pathname === "/jobs"
-                      ? "text-primary-600 dark:text-primary-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    pathname === "/jobs" || pathname.startsWith("/jobs/")
+                      ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                 >
                   Jobs
                 </Link>
                 <Link
                   href="/profile"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                     pathname === "/profile"
-                      ? "text-primary-600 dark:text-primary-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                 >
                   Profile
                 </Link>
                 <Link
                   href="/recommendations"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                     pathname === "/recommendations"
-                      ? "text-primary-600 dark:text-primary-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                 >
                   Recommendations
                 </Link>
+                <Link
+                  href="/applications"
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    pathname === "/applications"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  }`}
+                >
+                  Applications
+                </Link>
                 <button
                   onClick={handleLogout}
-                  className="ml-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow"
+                  className="ml-2 px-4 py-1.5 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-primary-500/20"
                 >
                   Logout
                 </button>
@@ -92,17 +122,17 @@ const Navbar = () => {
               <>
                 <Link
                   href="/auth/login"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
                     pathname === "/auth/login"
-                      ? "text-primary-600 dark:text-primary-400 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                      ? "text-primary-600 dark:text-primary-400 font-semibold bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="ml-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow"
+                  className="ml-2 px-4 py-1.5 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-primary-500/20"
                 >
                   Register
                 </Link>
@@ -114,7 +144,8 @@ const Navbar = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-300"
+              className="inline-flex items-center justify-center p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-300"
+              aria-expanded={isMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
@@ -158,15 +189,15 @@ const Navbar = () => {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-subtle rounded-b-xl">
             {isAuth ? (
               <>
                 <Link
                   href="/dashboard"
-                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                     pathname === "/dashboard"
-                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -174,10 +205,10 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/jobs"
-                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
-                    pathname === "/jobs"
-                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                    pathname === "/jobs" || pathname.startsWith("/jobs/")
+                      ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -185,10 +216,10 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/profile"
-                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                     pathname === "/profile"
-                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -196,21 +227,32 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/recommendations"
-                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                     pathname === "/recommendations"
-                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                   onClick={toggleMenu}
                 >
                   Recommendations
+                </Link>
+                <Link
+                  href="/applications"
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                    pathname === "/applications"
+                      ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  }`}
+                  onClick={toggleMenu}
+                >
+                  Applications
                 </Link>
                 <button
                   onClick={() => {
                     handleLogout();
                     toggleMenu();
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow mt-2"
+                  className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-primary-500/20 mt-3"
                 >
                   Logout
                 </button>
@@ -219,10 +261,10 @@ const Navbar = () => {
               <>
                 <Link
                   href="/auth/login"
-                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 ${
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                     pathname === "/auth/login"
-                      ? "text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-gray-700"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   }`}
                   onClick={toggleMenu}
                 >
@@ -230,7 +272,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="block w-full text-center px-3 py-2 rounded-lg text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow mt-2"
+                  className="block w-full text-center px-3 py-2 rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-all duration-300 shadow-sm hover:shadow-primary-500/20 mt-3"
                   onClick={toggleMenu}
                 >
                   Register

@@ -25,10 +25,11 @@ Provide job title, company, and one-line reason for each match.
       model: 'command-r-plus',
       prompt: 'You are a helpful job matching assistant. ' + prompt,
       temperature: 0.7,
-      max_tokens: 500,
+      maxTokens: 500,
     });
 
-    const recommendations = response.generations[0].text;
+    const generations = response.generations || [];
+    const recommendations = generations.length > 0 ? generations[0].text : '';
     
     // Parse the recommendations to extract structured data
     // This is a simple implementation - you might want to improve this parsing
