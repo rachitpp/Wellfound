@@ -3,7 +3,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 export default function SkeletonJobCard() {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 p-6 overflow-hidden animate-pulse-slow">
       <div className="flex justify-between items-start">
         <div className="space-y-3 flex-1">
           <Skeleton width={250} height={28} />

@@ -19,19 +19,19 @@ const Card: React.FC<CardProps> = ({
   raised = false,
   onClick,
 }) => {
-  const baseClasses = 'bg-white dark:bg-gray-800 rounded-xl overflow-hidden transition-all duration-300';
+  const baseClasses = 'bg-white dark:bg-gray-800 rounded-2xl overflow-hidden transition-all duration-300 ease-in-out';
   
   const hoverClasses = hover 
-    ? 'hover:translate-y-[-8px] hover:shadow-md cursor-pointer' 
+    ? 'hover:translate-y-[-8px] hover:shadow-lg cursor-pointer after:absolute after:inset-0 after:bg-gradient-to-r after:from-primary-500/5 after:to-accent-500/5 after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-300 relative' 
     : '';
   
   const borderClasses = bordered 
-    ? 'border border-gray-200 dark:border-gray-700' 
+    ? 'border border-gray-200 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-700' 
     : '';
   
   const shadowClasses = raised 
-    ? 'shadow-md' 
-    : 'shadow-sm';
+    ? 'shadow-md hover:shadow-lg' 
+    : 'shadow-sm hover:shadow-md';
   
   return (
     <div 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Button from '@/components/Button';
 import EmptyState from '@/components/EmptyState';
 import RecommendationCard from '@/components/RecommendationCard';
@@ -21,7 +20,8 @@ export default function RecommendationsPage() {
   const [hasProfile, setHasProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  // We don't need this state since we're redirecting if not authenticated
+  // const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [error, setError] = useState('');
   const [isAuthChecking, setIsAuthChecking] = useState(true);
 
@@ -33,37 +33,45 @@ export default function RecommendationsPage() {
         return;
       }
       setIsAuthChecking(false);
-      setIsUserAuthenticated(true);
 
       try {
+        // Load jobs data first
+        const jobsData = await getAllJobs();
+        setJobs(jobsData);
+        console.log('Loaded jobs data:', jobsData.length, 'jobs');
+        
+        // Then check profile
         const profileData = await getCurrentProfile();
         if (profileData) {
           setHasProfile(true);
           
+          // Finally load recommendations
           try {
             const recs = await getRecommendations();
+            console.log('Loaded recommendations:', recs);
             setRecommendations(recs);
-          } catch (error: any) {
+          } catch (error: Error | unknown) {
             console.error('Error fetching recommendations:', error);
-            if (error.message?.includes('Authentication required')) {
-              setIsUserAuthenticated(false);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            if (errorMessage.includes('Authentication required')) {
               router.push('/auth/login');
               setError('Your session has expired. Please log in again.');
             } else {
-              setError(error.message || 'Failed to load recommendations. Please try again later.');
+              setError(errorMessage || 'Failed to load recommendations. Please try again later.');
             }
           }
         } else {
           setHasProfile(false);
         }
-      } catch (error: any) {
-        console.error('Error fetching profile:', error);
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-          setIsUserAuthenticated(false);
+      } catch (error: unknown) {
+        console.error('Error in recommendations page:', error);
+        // Check for authentication errors
+        const errorObj = error as { response?: { status?: number } };
+        if (errorObj.response && (errorObj.response.status === 401 || errorObj.response.status === 403)) {
           router.push('/auth/login');
           setError('Your session has expired. Please log in again.');
         } else {
-          setError('Failed to load profile data. Please try again later.');
+          setError('Failed to load data. Please try again later.');
         }
       } finally {
         setIsLoading(false);
@@ -78,22 +86,51 @@ export default function RecommendationsPage() {
     setError('');
     
     try {
+      // Make sure we have jobs data
+      if (jobs.length === 0) {
+        const jobsData = await getAllJobs();
+        setJobs(jobsData);
+      }
+      
+      // Get recommendations
       const recs = await getRecommendations();
+      console.log('Generated new recommendations:', recs);
       setRecommendations(recs);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error generating recommendations:', error);
-      setError('Failed to generate recommendations. Please try again later.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(errorMessage || 'Failed to generate recommendations. Please try again later.');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // Find the full job details based on job title and company
+  // Find the full job details based on job title and company with fuzzy matching
   const findMatchingJob = (title: string, company: string): Job | undefined => {
-    return jobs.find(job => 
+    // First try exact match
+    let match = jobs.find(job => 
       job.title.toLowerCase() === title.toLowerCase() && 
       job.company.toLowerCase() === company.toLowerCase()
     );
+    
+    if (match) return match;
+    
+    // Try partial match on title and company
+    match = jobs.find(job => 
+      job.title.toLowerCase().includes(title.toLowerCase()) && 
+      job.company.toLowerCase().includes(company.toLowerCase())
+    );
+    
+    if (match) return match;
+    
+    // Try matching just by title
+    match = jobs.find(job => 
+      job.title.toLowerCase() === title.toLowerCase() ||
+      job.title.toLowerCase().includes(title.toLowerCase()) ||
+      title.toLowerCase().includes(job.title.toLowerCase())
+    );
+    
+    return match;
   };
 
   // Show loading spinner while checking authentication
@@ -169,12 +206,19 @@ export default function RecommendationsPage() {
       ) : recommendations.length > 0 ? (
         <div className="grid gap-4">
           {recommendations.map((rec, index) => {
-            const matchingJob = findMatchingJob(rec.job, rec.company);
+            // Ensure recommendation has all required fields
+            const recommendation = {
+              job: rec.job || 'Unknown Job',
+              company: rec.company || 'Unknown Company',
+              reason: rec.reason || 'This job matches your skills and experience.'
+            };
+            
+            const matchingJob = findMatchingJob(recommendation.job, recommendation.company);
             
             return (
               <div key={index} className="space-y-3">
                 <RecommendationCard
-                  recommendation={rec}
+                  recommendation={recommendation}
                   onClick={matchingJob ? () => router.push(`/jobs/${matchingJob._id}`) : undefined}
                 />
                 

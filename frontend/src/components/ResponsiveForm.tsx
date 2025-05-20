@@ -17,14 +17,14 @@ interface FormField {
 
 interface ResponsiveFormProps {
   defaultValues: Record<string, unknown>;
-  onSubmit: (data: Record<string, unknown>) => Promise<void> | void;
+  submitAction: (data: Record<string, unknown>) => Promise<void> | void;
   fields: FormField[];
   submitLabel?: string;
 }
 
 export default function ResponsiveForm({
   defaultValues,
-  onSubmit,
+  submitAction,
   fields,
   submitLabel = 'Submit',
 }: ResponsiveFormProps) {
@@ -37,7 +37,7 @@ export default function ResponsiveForm({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-5 md:space-y-6">
+    <form onSubmit={handleSubmit(submitAction)} className="space-y-5 sm:space-y-6 md:space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
         {fields.map((field) => (
           <div
@@ -46,21 +46,21 @@ export default function ResponsiveForm({
           >
             <label
               htmlFor={field.name}
-              className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 font-display tracking-wide"
             >
               {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
+              {field.required && <span className="text-red-500 ml-1 font-medium">*</span>}
             </label>
 
             {field.type === 'textarea' ? (
               <textarea
                 id={field.name}
                 {...register(field.name, field.validation)}
-                className={`w-full px-3 py-2 sm:px-3.5 sm:py-2.5 md:px-4 md:py-3 text-xs sm:text-sm md:text-base rounded-lg border ${
+                className={`w-full px-4 py-3 text-sm rounded-xl border-2 shadow-sm hover:shadow-md ${
                   errors[field.name]
-                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500'
-                } bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none transition-colors`}
+                    ? 'border-red-500 focus:ring-4 focus:ring-red-500/20 focus:border-red-500'
+                    : 'border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-primary-500/20 dark:focus:ring-primary-400/30 focus:border-primary-500 dark:focus:border-primary-400'
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none transition-all duration-300 ease-in-out`}
                 rows={field.rows || 4}
                 placeholder={field.placeholder}
               />
@@ -68,11 +68,11 @@ export default function ResponsiveForm({
               <select
                 id={field.name}
                 {...register(field.name, field.validation)}
-                className={`w-full px-3 py-2 sm:px-3.5 sm:py-2.5 md:px-4 md:py-3 text-xs sm:text-sm md:text-base rounded-lg border ${
+                className={`w-full px-4 py-3 text-sm rounded-xl border-2 shadow-sm hover:shadow-md ${
                   errors[field.name]
-                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500'
-                } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors`}
+                    ? 'border-red-500 focus:ring-4 focus:ring-red-500/20 focus:border-red-500'
+                    : 'border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-primary-500/20 dark:focus:ring-primary-400/30 focus:border-primary-500 dark:focus:border-primary-400'
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-300 ease-in-out`}
               >
                 <option value="">{field.placeholder || 'Select...'}</option>
                 {field.options?.map((option) => (
@@ -86,17 +86,17 @@ export default function ResponsiveForm({
                 id={field.name}
                 type={field.type || 'text'}
                 {...register(field.name, field.validation)}
-                className={`w-full px-3 py-2 sm:px-3.5 sm:py-2.5 md:px-4 md:py-3 text-xs sm:text-sm md:text-base rounded-lg border ${
+                className={`w-full px-4 py-3 text-sm rounded-xl border-2 shadow-sm hover:shadow-md ${
                   errors[field.name]
-                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500'
-                } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors`}
+                    ? 'border-red-500 focus:ring-4 focus:ring-red-500/20 focus:border-red-500'
+                    : 'border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-primary-500/20 dark:focus:ring-primary-400/30 focus:border-primary-500 dark:focus:border-primary-400'
+                } bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all duration-300 ease-in-out`}
                 placeholder={field.placeholder}
               />
             )}
 
             {errors[field.name] && (
-              <p className="mt-1 text-xs sm:text-xs md:text-sm text-red-500">
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/10 px-3 py-1.5 rounded-lg inline-block font-medium">
                 {errors[field.name]?.message?.toString()}
               </p>
             )}

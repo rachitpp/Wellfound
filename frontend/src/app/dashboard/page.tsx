@@ -124,11 +124,11 @@ export default function DashboardPage() {
           <div className="relative glass-effect bg-white/10 m-0.5 p-5 md:p-7 rounded-2xl z-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
               <div>
-                <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">
+                <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl font-extrabold text-white mb-2">
                   Welcome back,{" "}
-                  <span className="text-accent-300">{userName || "User"}</span>!
+                  <span className="text-accent-200 font-extrabold">{userName || "User"}</span>!
                 </h1>
-                <p className="text-white/90 text-base md:text-lg max-w-lg">
+                <p className="text-white text-base md:text-lg max-w-lg font-medium">
                   {hasProfile
                     ? "Here's your personalized job dashboard with recommendations tailored to your profile."
                     : "Complete your profile to get personalized job recommendations based on your skills and preferences."}
@@ -157,10 +157,10 @@ export default function DashboardPage() {
                     <UserIcon className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white/80 text-xs md:text-sm font-medium">
+                    <h3 className="text-white text-xs md:text-sm font-semibold">
                       Profile Status
                     </h3>
-                    <p className="text-white text-sm md:text-base font-medium">Complete</p>
+                    <p className="text-white text-sm md:text-base font-bold">Complete</p>
                   </div>
                 </div>
                 <div className="bg-white/10 rounded-lg p-3 flex items-center gap-2">
@@ -168,10 +168,10 @@ export default function DashboardPage() {
                     <DocumentTextIcon className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white/80 text-xs md:text-sm font-medium">
+                    <h3 className="text-white text-xs md:text-sm font-semibold">
                       Job Recommendations
                     </h3>
-                    <p className="text-white text-sm md:text-base font-medium">
+                    <p className="text-white text-sm md:text-base font-bold">
                       {recommendations.length} Available
                     </p>
                   </div>
@@ -181,10 +181,10 @@ export default function DashboardPage() {
                     <ClipboardDocumentCheckIcon className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white/80 text-xs md:text-sm font-medium">
+                    <h3 className="text-white text-xs md:text-sm font-semibold">
                       Activity Status
                     </h3>
-                    <p className="text-white text-sm md:text-base font-medium">Active</p>
+                    <p className="text-white text-sm md:text-base font-bold">Active</p>
                   </div>
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function DashboardPage() {
                 <div className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                   <BriefcaseIcon className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                 </div>
-                <h2 className="text-base md:text-lg font-serif font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-base md:text-lg font-serif font-bold text-gray-900 dark:text-white">
                   Recent Job Listings
                 </h2>
               </div>
@@ -265,14 +265,14 @@ export default function DashboardPage() {
                 <div className="w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
                   <SparklesIcon className="h-4 w-4 text-accent-600 dark:text-accent-400" />
                 </div>
-                <h2 className="text-base md:text-lg font-serif font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-base md:text-lg font-serif font-bold text-gray-900 dark:text-white">
                   Your Job Matches
                 </h2>
               </div>
               {hasProfile && recommendations.length > 0 && (
                 <Link
                   href="/recommendations"
-                  className="text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium text-xs md:text-sm flex items-center gap-1 transition-colors duration-300 py-1 px-2 rounded-md hover:bg-accent-50 dark:hover:bg-accent-900/20"
+                  className="text-accent-700 dark:text-accent-300 hover:text-accent-800 dark:hover:text-accent-200 font-semibold text-xs md:text-sm flex items-center gap-1 transition-colors duration-300 py-1 px-2 rounded-md hover:bg-accent-50 dark:hover:bg-accent-900/20"
                 >
                   View All
                   <ArrowRightIcon className="h-3 w-3" />

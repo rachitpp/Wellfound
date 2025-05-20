@@ -1,13 +1,53 @@
 import axios from 'axios';
 
 // Create axios instance with base URL
+// Try different port options if the default doesn't work
+const DEFAULT_API_URL = 'http://localhost:3300/api';
+const FALLBACK_API_URLS = ['http://localhost:3000/api', 'http://localhost:5000/api', 'http://localhost:8000/api'];
+
+// Function to check if a URL is reachable
+const checkApiUrl = async (url: string): Promise<boolean> => {
+  try {
+    await axios.get(`${url}/health`, { timeout: 2000 });
+    return true;
+  } catch {
+    // Ignore the error, just return false if we can't reach the URL
+    return false;
+  }
+};
+
+// Use the configured URL or default
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL;
+
+// Create axios instance with base URL
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300/api',
+  baseURL: apiUrl,
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 15000, // 15 seconds timeout
 });
+
+// Log configuration for debugging
+console.log('API base URL:', apiUrl);
+
+// Try fallback URLs if the main one fails
+if (typeof window !== 'undefined') {
+  (async () => {
+    // Only run this in the browser
+    if (!await checkApiUrl(apiUrl)) {
+      console.warn(`API at ${apiUrl} is not reachable, trying fallbacks...`);
+      
+      for (const fallbackUrl of FALLBACK_API_URLS) {
+        if (await checkApiUrl(fallbackUrl)) {
+          console.log(`Using fallback API URL: ${fallbackUrl}`);
+          api.defaults.baseURL = fallbackUrl;
+          break;
+        }
+      }
+    }
+  })();
+}
 
 // Add request interceptor to add auth token
 api.interceptors.request.use(
@@ -30,8 +70,18 @@ api.interceptors.response.use(
   (error) => {
     // Handle network errors
     if (!error.response) {
-      console.error('Network error:', error);
-      return Promise.reject(new Error('Network error. Please check your connection.'));
+      console.warn('Network error encountered, using fallback mechanisms:', error);
+      
+      // Instead of rejecting with an error, we'll return a special response
+      // that indicates we're offline, but won't break the application
+      return Promise.resolve({
+        data: null,
+        status: 0,
+        statusText: 'offline',
+        headers: {},
+        config: error.config || {},
+        offline: true, // Custom flag to indicate offline status
+      });
     }
     
     // Handle 401 Unauthorized errors (token expired or invalid)

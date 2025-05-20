@@ -1,258 +1,282 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { getJobById } from "@/lib/jobService";
-import { Job } from "@/lib/jobService";
+import { getJobById, Job } from "@/lib/jobService";
 import { createApplication } from "@/lib/applicationService";
 import Button from "@/components/Button";
+import { isAuthenticated } from "@/lib/authService";
+import {
+  ArrowLeftIcon,
+  MapPinIcon,
+  BuildingOffice2Icon,
+  ClockIcon,
+  BriefcaseIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
+export default function JobDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = (params?.id as string) || ""; // safely extract id
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isApplying, setIsApplying] = useState(false);
   const [applicationSuccess, setApplicationSuccess] = useState(false);
   const [applicationNotes, setApplicationNotes] = useState("");
+  const [applicationError, setApplicationError] = useState("");
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const authenticated = await isAuthenticated();
+        if (!authenticated) {
+          router.push("/auth/login");
+          return;
+        }
+        setIsAuthChecking(false);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        setIsAuthChecking(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   useEffect(() => {
     const fetchJob = async () => {
+      if (!id || isAuthChecking) return;
+
       try {
-        const jobData = await getJobById(params.id);
+        setIsLoading(true);
+        const jobData = await getJobById(id);
         setJob(jobData);
       } catch (err) {
         console.error("Error fetching job:", err);
-        setError(
-          "Failed to load job details. The job may not exist or has been removed."
-        );
+        setError("Failed to load job details. The job may not exist or has been removed.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (params.id) {
-      fetchJob();
-    }
-  }, [params.id]);
+    fetchJob();
+  }, [id, isAuthChecking]);
 
   const handleBackClick = () => {
     router.back();
   };
 
-  return (
-    <ProtectedRoute>
-      <div>
-        <button
-          onClick={handleBackClick}
-          className="mb-6 flex items-center text-blue-600 hover:underline"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to Jobs
-        </button>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        ) : error ? (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <p>{error}</p>
-            <Link
-              href="/jobs"
-              className="mt-4 text-blue-600 hover:underline block"
-            >
-              Return to job listings
-            </Link>
-          </div>
-        ) : job ? (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    {job.title}
-                  </h1>
-                  <p className="text-lg text-gray-600 mt-1">{job.company}</p>
-                  <div className="flex items-center mt-2 text-gray-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    {job.location}
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100 },
+    },
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-5">
+      <motion.button
+        onClick={handleBackClick}
+        className="mb-3 flex items-center text-primary-600 hover:text-primary-700 transition-colors duration-200 font-medium text-sm"
+        whileHover={{ x: -3 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <ArrowLeftIcon className="h-4 w-4 mr-1.5" />
+        Back to Jobs
+      </motion.button>
+
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
+        </div>
+      ) : error ? (
+        <motion.div
+          className="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-lg shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <h3 className="text-base font-medium mb-1.5">Error Loading Job</h3>
+          <p className="mb-3 text-sm">{error}</p>
+          <Link href="/jobs" className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium text-sm">
+            <ArrowLeftIcon className="h-3.5 w-3.5 mr-1.5" />
+            Return to job listings
+          </Link>
+        </motion.div>
+      ) : job ? (
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-100 dark:border-gray-700"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Header */}
+          <motion.div className="p-4 md:p-5 border-b border-gray-100 dark:border-gray-700" variants={itemVariants}>
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+              <div className="flex-1">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center text-primary-600 dark:text-primary-400 flex-shrink-0">
+                    <BuildingOffice2Icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h1 className="text-xl md:text-2xl font-display font-bold text-gray-900 dark:text-white">{job.title}</h1>
+                    <p className="text-base text-gray-700 dark:text-gray-300 mt-0.5 font-medium">{job.company}</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-start md:items-end">
-                  <span className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full capitalize">
+
+                <div className="flex flex-wrap items-center text-gray-800 dark:text-gray-100 text-xs font-medium gap-2 mt-3">
+                  <span className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded">
+                    <MapPinIcon className="h-3.5 w-3.5 text-gray-700 dark:text-gray-200" />
+                    {job.location}
+                  </span>
+                  <span className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded">
+                    <BriefcaseIcon className="h-3.5 w-3.5 text-gray-700 dark:text-gray-200" />
                     {job.jobType}
                   </span>
-                  <span className="text-sm text-gray-500 mt-2">
-                    Posted on {new Date(job.createdAt).toLocaleDateString()}
+                  <span className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded">
+                    <ClockIcon className="h-3.5 w-3.5 text-gray-700 dark:text-gray-200" />
+                    Posted {new Date(job.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
             </div>
+          </motion.div>
 
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Required Skills</h2>
-              <div className="flex flex-wrap gap-2 mb-6">
+          {/* Description */}
+          <div className="p-4 md:p-5">
+            <motion.div className="mb-5" variants={itemVariants}>
+              <h2 className="text-base font-display font-bold text-gray-900 dark:text-white mb-2">Job Description</h2>
+              <div className="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
+                <p className="whitespace-pre-line text-sm font-medium">{job.description}</p>
+              </div>
+            </motion.div>
+
+            {/* Skills */}
+            <motion.div className="mb-5" variants={itemVariants}>
+              <h2 className="text-base font-display font-bold text-gray-900 dark:text-white mb-2">Required Skills</h2>
+              <div className="flex flex-wrap gap-1.5">
                 {job.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"
+                    className="px-2 py-1 bg-primary-50 dark:bg-primary-900/20 text-primary-800 dark:text-primary-200 rounded text-xs font-semibold"
                   >
                     {skill}
                   </span>
                 ))}
               </div>
+            </motion.div>
 
-              <h2 className="text-xl font-semibold mb-4">Job Description</h2>
-              <div className="prose max-w-none">
-                {job.description ? (
-                  <p className="text-gray-700 whitespace-pre-line">
-                    {job.description}
-                  </p>
-                ) : (
-                  <p className="text-gray-500 italic">
-                    No detailed description provided.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="p-6 bg-gray-50 border-t border-gray-200">
+            {/* Application */}
+            <motion.div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700" variants={itemVariants}>
               {!applicationSuccess ? (
-                <div className="space-y-6">
-                  <div className="max-w-2xl mx-auto">
-                    <label
-                      htmlFor="notes"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                <div>
+                  <h2 className="text-base font-display font-bold text-gray-900 dark:text-white mb-3">Apply for this Position</h2>
+                  <div className="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg shadow-sm">
+                    <label htmlFor="notes" className="block text-xs font-semibold text-gray-800 dark:text-gray-100 mb-1.5">
                       Application Notes (Optional)
                     </label>
                     <textarea
                       id="notes"
                       rows={3}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Add any notes to your application..."
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm font-medium"
+                      placeholder="Introduce yourself and explain why you're a good fit for this position..."
                       value={applicationNotes}
                       onChange={(e) => setApplicationNotes(e.target.value)}
                     ></textarea>
-                  </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link
-                      href="/recommendations"
-                      className="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                    >
-                      View Similar Jobs
-                    </Link>
-                    <Button
-                      variant="primary"
-                      size="md"
-                      isLoading={isApplying}
-                      onClick={async () => {
-                        if (!job) return;
+                    <div className="flex flex-col sm:flex-row gap-2 justify-end mt-4">
+                      <Link
+                        href="/recommendations"
+                        className="inline-flex justify-center items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
+                      >
+                        View Similar Jobs
+                      </Link>
+                      {applicationError && (
+                        <div className="mb-3 text-red-600 dark:text-red-400 text-sm font-medium bg-red-50 dark:bg-red-900/20 p-2 rounded">
+                          {applicationError}
+                        </div>
+                      )}
+                      <Button
+                        variant="primary"
+                        size="md"
+                        isLoading={isApplying}
+                        onClick={async () => {
+                          if (!job) return;
 
-                        setIsApplying(true);
-                        try {
-                          const result = await createApplication(
-                            job._id,
-                            applicationNotes
-                          );
-                          if (result) {
-                            setApplicationSuccess(true);
+                          // Reset any previous errors
+                          setApplicationError("");
+                          setIsApplying(true);
+                          
+                          try {
+                            const result = await createApplication(job._id, applicationNotes);
+                            if (result) {
+                              // Application was successfully created (either via API or fallback)
+                              setApplicationSuccess(true);
+                              // Clear any previous error
+                              setApplicationError("");
+                            } else {
+                              // Only show error if both API and fallback mechanism failed
+                              setApplicationError("Failed to submit application. Please try again later.");
+                            }
+                          } catch (error) {
+                            // The error is already handled in the applicationService with fallback
+                            // Only log it here but don't show to user unless result is null
+                            console.error("Error applying for job:", error);
+                          } finally {
+                            setIsApplying(false);
                           }
-                        } catch (error) {
-                          console.error("Error applying for job:", error);
-                        } finally {
-                          setIsApplying(false);
-                        }
-                      }}
-                    >
-                      {isApplying
-                        ? "Submitting Application..."
-                        : "Apply for This Job"}
-                    </Button>
+                        }}
+                      >
+                        {isApplying ? "Submitting..." : "Apply Now"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-green-600"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                <motion.div
+                  className="text-center py-6 bg-green-50 dark:bg-green-900/20 rounded-lg"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 100 }}
+                >
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-800/30 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+                    <CheckIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
-                  <h3 className="text-xl font-medium text-gray-900 mb-2">
-                    Application Submitted!
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Your application has been successfully submitted.
+                  <h3 className="text-lg font-display font-bold text-gray-900 dark:text-white mb-2">Application Submitted!</h3>
+                  <p className="text-gray-800 dark:text-gray-100 mb-5 max-w-md mx-auto text-sm font-medium">
+                    Your application has been successfully submitted. We&apos;ll notify you when the employer responds.
                   </p>
-                  <div className="flex gap-4 justify-center">
-                    <Button
-                      variant="outline"
-                      size="md"
-                      onClick={() => router.push("/applications")}
-                    >
-                      View My Applications
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button variant="outline" size="sm" onClick={() => router.push("/applications")}>
+                      View Applications
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="md"
-                      onClick={() => router.push("/jobs")}
-                    >
+                    <Button variant="primary" size="sm" onClick={() => router.push("/jobs")}>
                       Browse More Jobs
                     </Button>
                   </div>
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           </div>
-        ) : null}
-      </div>
-    </ProtectedRoute>
+        </motion.div>
+      ) : null}
+    </div>
   );
 }

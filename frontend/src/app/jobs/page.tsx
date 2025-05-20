@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import JobCard from "@/components/JobCard";
 import SkeletonJobCard from "@/components/SkeletonJobCard";
 import EmptyState from "@/components/EmptyState";
+import Pagination from "@/components/Pagination";
 import { getAllJobs } from "@/lib/jobService";
 import { Job } from "@/lib/jobService";
 import { saveJob, unsaveJob, checkIfJobSaved } from "@/lib/savedJobService";
@@ -28,6 +29,9 @@ export default function JobsPage() {
   const [savedJobIds, setSavedJobIds] = useState<{ [key: string]: boolean }>({});
   const [showFilters, setShowFilters] = useState(false);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 5; // Number of jobs to display per page
 
   // Get all unique skills from jobs using memoization
   const allSkills = useMemo(() => {
@@ -55,38 +59,98 @@ export default function JobsPage() {
 
   const fetchJobs = useCallback(async () => {
     try {
+      setError(null); // Clear any previous errors
       const jobsData = await getAllJobs();
-      setJobs(jobsData);
+      
+      // Validate job data
+      if (!jobsData || !Array.isArray(jobsData)) {
+        console.error('Invalid job data returned from API:', jobsData);
+        setError('Received invalid data from the server. Using fallback data.');
+        return;
+      }
+      
+      if (jobsData.length === 0) {
+        console.warn('No jobs returned from API');
+      } else {
+        console.log(`Successfully fetched ${jobsData.length} jobs`);
+      }
+      
+      // Filter out any invalid job entries
+      const validJobs = jobsData.filter(job => {
+        if (!job || typeof job !== 'object' || !job._id) {
+          console.warn('Found invalid job in API response:', job);
+          return false;
+        }
+        return true;
+      });
+      
+      setJobs(validJobs);
 
       // Check which jobs are saved
       const savedStatuses: { [key: string]: boolean } = {};
-      for (const job of jobsData) {
-        const isSaved = await checkIfJobSaved(job._id);
-        if (isSaved) {
-          savedStatuses[job._id] = true;
+      for (const job of validJobs) {
+        try {
+          if (!job._id) continue;
+          const isSaved = await checkIfJobSaved(job._id);
+          if (isSaved) {
+            savedStatuses[job._id] = true;
+          }
+        } catch (saveError) {
+          console.error(`Error checking saved status for job ${job._id}:`, saveError);
+          // Continue with other jobs even if one fails
         }
       }
       setSavedJobIds(savedStatuses);
-    } catch (error) {
+    } catch (err: unknown) {
+      const error = err as Error;
       console.error("Error fetching jobs:", error);
+      setError(`Failed to load jobs: ${error.message}. Please try again later.`);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    // Check authentication first
-    if (!isAuthenticated()) {
-      router.push('/auth/login');
-      return;
-    }
-    setIsAuthChecking(false);
-    
-    fetchJobs();
+    const checkAuthAndFetchJobs = async () => {
+      try {
+        // Check authentication first
+        const authenticated = isAuthenticated();
+        console.log('Authentication status:', authenticated);
+        
+        if (!authenticated) {
+          router.push('/auth/login');
+          return;
+        }
+        
+        setIsAuthChecking(false);
+        await fetchJobs();
+      } catch (error) {
+        console.error('Error in auth check or job fetch:', error);
+        setIsAuthChecking(false);
+      }
+    };
+
+    checkAuthAndFetchJobs();
   }, [fetchJobs, router]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedJobType, selectedSkill]);
 
   // Use memoization for filtered jobs
   const filteredJobs = useMemo(() => {
+    // Log initial state for debugging
+    console.log('Filtering jobs:', {
+      totalJobs: jobs.length,
+      searchTerm,
+      selectedJobType,
+      selectedSkill
+    });
+
+    // If no jobs, return empty array
+    if (!jobs.length) return [];
+
     let filtered = [...jobs];
 
     if (searchTerm) {
@@ -98,18 +162,38 @@ export default function JobsPage() {
           job.location.toLowerCase().includes(term) ||
           job.skills.some((skill) => skill.toLowerCase().includes(term))
       );
+      console.log(`After search term filter: ${filtered.length} jobs remaining`);
     }
 
     if (selectedJobType !== "all") {
       filtered = filtered.filter((job) => job.jobType === selectedJobType);
+      console.log(`After job type filter: ${filtered.length} jobs remaining`);
     }
 
     if (selectedSkill) {
       filtered = filtered.filter((job) => job.skills.includes(selectedSkill));
+      console.log(`After skill filter: ${filtered.length} jobs remaining`);
     }
 
     return filtered;
   }, [jobs, searchTerm, selectedJobType, selectedSkill]);
+
+  // Calculate pagination values
+  const totalPages = Math.max(1, Math.ceil(filteredJobs.length / jobsPerPage));
+
+  // Get current page jobs
+  const currentJobs = useMemo(() => {
+    const indexOfLastJob = currentPage * jobsPerPage;
+    const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+    return filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  }, [filteredJobs, currentPage, jobsPerPage]);
+
+  // Handle page change
+  const handlePageChange = useCallback((pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of job listings
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,27 +220,56 @@ export default function JobsPage() {
     setSearchTerm("");
     setSelectedJobType("all");
     setSelectedSkill("");
+    setCurrentPage(1); // Reset to first page when clearing filters
   }, []);
 
-  const handleSaveToggle = useCallback(
-    async (jobId: string, shouldSave: boolean) => {
+  const toggleSaveJob = useCallback(
+    async (jobId: string) => {
       try {
-        if (shouldSave) {
-          await saveJob(jobId);
-          setSavedJobIds((prev) => ({ ...prev, [jobId]: true }));
+        if (savedJobIds[jobId]) {
+          // Job is already saved, so unsave it
+          const success = await unsaveJob(jobId);
+          if (success) {
+            setSavedJobIds((prev) => {
+              const updated = { ...prev };
+              delete updated[jobId];
+              return updated;
+            });
+            console.log(`Successfully unsaved job ${jobId}`);
+          } else {
+            console.error(`Failed to unsave job ${jobId}`);
+          }
         } else {
-          await unsaveJob(jobId);
-          setSavedJobIds((prev) => {
-            const updated = { ...prev };
-            delete updated[jobId];
-            return updated;
-          });
+          // Job is not saved, so save it
+          const savedJob = await saveJob(jobId);
+          if (savedJob) {
+            setSavedJobIds((prev) => ({
+              ...prev,
+              [jobId]: true,
+            }));
+            console.log(`Successfully saved job ${jobId}`);
+          } else {
+            console.error(`Failed to save job ${jobId}`);
+          }
         }
+      } catch (err) {
+        console.error('Error toggling job save status:', err);
+        // Show a toast or notification to the user
+      }
+    },
+    [savedJobIds, setSavedJobIds]
+  );
+
+  const handleSaveToggle = useCallback(
+    async (jobId: string) => {
+      try {
+        // toggleSaveJob checks the current saved state internally
+        await toggleSaveJob(jobId);
       } catch (error) {
         console.error("Error toggling job save status:", error);
       }
     },
-    []
+    [toggleSaveJob]
   );
 
   const containerVariants = {
@@ -284,9 +397,10 @@ export default function JobsPage() {
             </div>
 
             <div className="flex justify-between items-center pt-2">
-              <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <div className="text-xs md:text-sm text-gray-700 dark:text-gray-300 font-medium">
                 {filteredJobs.length}{" "}
                 {filteredJobs.length === 1 ? "job" : "jobs"} found
+                {filteredJobs.length > jobsPerPage && ` • ${totalPages} pages`}
               </div>
               <Button
                 onClick={handleClearFilters}
@@ -307,33 +421,78 @@ export default function JobsPage() {
               <SkeletonJobCard key={i} />
             ))}
           </div>
+        ) : error ? (
+          <motion.div variants={itemVariants}>
+            <EmptyState
+              title="Error Loading Jobs"
+              message={error}
+              icon={<XMarkIcon className="h-8 w-8 text-accent-500" />}
+              actionLabel="Try Again"
+              onAction={() => {
+                setIsLoading(true);
+                fetchJobs();
+              }}
+              className="bg-white dark:bg-gray-800 shadow-subtle border border-accent-100 dark:border-accent-900 rounded-xl p-8"
+            />
+          </motion.div>
         ) : filteredJobs.length > 0 ? (
-          <motion.div className="grid gap-4" variants={containerVariants}>
-            {filteredJobs.map((job, index) => (
-              <motion.div
-                key={job._id}
-                variants={itemVariants}
-                custom={index}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: index * 0.05 }}
+          <>
+            <motion.div className="grid gap-4" variants={containerVariants}>
+              {currentJobs.map((job, index) => (
+                <motion.div
+                  key={job._id}
+                  variants={itemVariants}
+                  custom={index}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <JobCard
+                    job={job}
+                    onClick={() => router.push(`/jobs/${job._id}`)}
+                    showDescription={true}
+                    isSaved={!!savedJobIds[job._id]}
+                    onSaveToggle={() => handleSaveToggle(job._id)}
+                    className="card-hover"
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <motion.div 
+                className="mt-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
               >
-                <JobCard
-                  job={job}
-                  onClick={() => router.push(`/jobs/${job._id}`)}
-                  showDescription={true}
-                  isSaved={!!savedJobIds[job._id]}
-                  onSaveToggle={handleSaveToggle}
-                  className="card-hover"
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  className="py-2"
                 />
+                <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  Showing {Math.min(filteredJobs.length, (currentPage - 1) * jobsPerPage + 1)} - {Math.min(filteredJobs.length, currentPage * jobsPerPage)} of {filteredJobs.length} jobs
+                </div>
               </motion.div>
-            ))}
+            )}
+          </>
+        ) : jobs.length === 0 ? (
+          <motion.div variants={itemVariants}>
+            <EmptyState
+              title="Loading Jobs"
+              message="Please wait while we connect to the job database. If this persists, there might be a connection issue."
+              icon={<BriefcaseIcon className="h-8 w-8 text-primary-400" />}
+              className="bg-white dark:bg-gray-800 shadow-subtle border border-gray-100 dark:border-gray-700 rounded-xl p-8"
+            />
           </motion.div>
         ) : (
           <motion.div variants={itemVariants}>
             <EmptyState
               title="No matching jobs"
-              message="No jobs found matching your criteria. Try adjusting your filters."
+              message="No jobs found matching your criteria. Try adjusting your filters or try a different search term."
               icon={<MagnifyingGlassIcon className="h-8 w-8 text-gray-400" />}
               actionLabel="Clear Filters"
               onAction={handleClearFilters}

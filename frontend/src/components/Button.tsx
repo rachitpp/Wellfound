@@ -46,31 +46,31 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseClasses =
-      "font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 inline-flex items-center justify-center";
+      "font-medium rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 inline-flex items-center justify-center relative overflow-hidden transform hover:scale-[1.02] active:scale-[0.98]";
 
     const variantClasses = {
       primary:
-        "bg-primary-600 hover:bg-primary-700 text-white shadow-sm hover:shadow-primary-500/30 focus:ring-primary-500",
+        "bg-primary-600 hover:bg-primary-700 text-white shadow-md hover:shadow-lg hover:shadow-primary-500/30 focus:ring-primary-500 after:absolute after:inset-0 after:bg-white/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity",
       secondary:
-        "bg-accent-600 hover:bg-accent-700 text-white shadow-sm hover:shadow-accent-500/30 focus:ring-accent-500",
+        "bg-accent-600 hover:bg-accent-700 text-white shadow-md hover:shadow-lg hover:shadow-accent-500/30 focus:ring-accent-500 after:absolute after:inset-0 after:bg-white/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity",
       outline:
-        "border border-gray-300 hover:border-gray-400 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 focus:ring-primary-500",
+        "border-2 border-gray-300 hover:border-gray-400 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 focus:ring-primary-500 hover:shadow-md",
       ghost:
         "bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-gray-500",
       danger:
-        "bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-red-500/30 focus:ring-red-500",
+        "bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-lg hover:shadow-red-500/30 focus:ring-red-500 after:absolute after:inset-0 after:bg-white/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity",
       success:
-        "bg-success-600 hover:bg-success-700 text-white shadow-sm hover:shadow-success-500/30 focus:ring-success-500",
+        "bg-success-600 hover:bg-success-700 text-white shadow-md hover:shadow-lg hover:shadow-success-500/30 focus:ring-success-500 after:absolute after:inset-0 after:bg-white/20 after:opacity-0 hover:after:opacity-100 after:transition-opacity",
       light:
-        "bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 shadow-sm hover:shadow focus:ring-gray-500",
+        "bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 shadow-md hover:shadow-lg focus:ring-gray-500",
     };
 
     const sizeClasses = {
-      xs: "text-xs px-2.5 py-1",
-      sm: "text-sm px-3 py-2",
-      md: "text-sm px-4 py-2.5",
-      lg: "text-base px-5 py-3",
-      xl: "text-lg px-8 py-4",
+      xs: "text-xs px-2 py-1 font-medium",
+      sm: "text-xs px-3 py-1.5 font-medium",
+      md: "text-sm px-4 py-2 font-medium",
+      lg: "text-sm px-5 py-2.5 font-semibold",
+      xl: "text-base px-6 py-3 font-semibold",
     };
 
     const iconOnlySizeClasses = {
