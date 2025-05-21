@@ -183,8 +183,8 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 top-16 z-50">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg rounded-b-xl mx-2 sm:mx-4 md:mx-6">
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-subtle rounded-b-xl">
             {isAuth ? (
               <>
                 <Link

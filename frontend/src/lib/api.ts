@@ -1,10 +1,15 @@
 import axios from 'axios';
 
 // Create axios instance with base URL
-// Try different port options if the default doesn't work
+// Define both production and development URLs
 const PRODUCTION_API_URL = 'https://wellfound-backend.onrender.com/api';
 const DEFAULT_API_URL = 'http://localhost:3300/api';
-const FALLBACK_API_URLS = ['http://localhost:3000/api', 'http://localhost:5000/api', 'http://localhost:8000/api', PRODUCTION_API_URL];
+const FALLBACK_API_URLS = [
+  PRODUCTION_API_URL, // Try production URL first in fallbacks
+  'http://localhost:3000/api',
+  'http://localhost:5000/api',
+  'http://localhost:8000/api'
+];
 
 // Function to check if a URL is reachable
 const checkApiUrl = async (url: string): Promise<boolean> => {
@@ -17,10 +22,12 @@ const checkApiUrl = async (url: string): Promise<boolean> => {
   }
 };
 
-// Use the configured URL, production URL, or default
-// In production environments, prefer the production API URL
-const isProduction = process.env.NODE_ENV === 'production';
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || (isProduction ? PRODUCTION_API_URL : DEFAULT_API_URL);
+// Determine if we're in a production environment
+const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+
+// Use the configured URL, or choose based on environment
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 
+  (isProduction ? PRODUCTION_API_URL : DEFAULT_API_URL);
 
 // Create axios instance with base URL
 const api = axios.create({

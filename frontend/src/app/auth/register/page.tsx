@@ -99,7 +99,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8 relative">
       <div className="absolute inset-0 -z-10">
         <div className="absolute -top-20 right-0 w-80 h-80 bg-primary-200 dark:bg-primary-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-30 animate-blob"></div>
         <div className="absolute bottom-0 left-16 w-72 h-72 bg-accent-200 dark:bg-accent-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
@@ -107,7 +107,7 @@ export default function RegisterPage() {
       </div>
 
       <motion.div
-        className="max-w-md w-full"
+        className="max-w-lg w-full"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -116,8 +116,8 @@ export default function RegisterPage() {
           stiffness: 100,
         }}
       >
-        <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-subtle border border-gray-100 dark:border-gray-700">
-          <div className="mb-6 text-center">
+        <div className="bg-white dark:bg-gray-800 p-5 sm:p-7 rounded-xl shadow-subtle border border-gray-100 dark:border-gray-700">
+          <div className="mb-4 text-center">
             <motion.div
               className="mx-auto w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center mb-3"
               initial={{ scale: 0 }}
@@ -132,7 +132,7 @@ export default function RegisterPage() {
               <UserIcon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             </motion.div>
 
-            <h1 className="text-xl sm:text-2xl font-serif font-bold mb-2 text-gray-900 dark:text-white">
+            <h1 className="text-lg sm:text-xl font-serif font-bold mb-1 text-gray-900 dark:text-white">
               Create an Account
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -142,7 +142,7 @@ export default function RegisterPage() {
 
           {registerError && (
             <motion.div
-              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-3 py-2 rounded-lg mb-5 text-xs sm:text-sm flex items-center gap-2"
+              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-3 py-1.5 rounded-lg mb-3 text-xs sm:text-sm flex items-center gap-2"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -151,7 +151,7 @@ export default function RegisterPage() {
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <FormInput
               label="Full Name"
               type="text"
@@ -217,7 +217,7 @@ export default function RegisterPage() {
             </div>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
               Already have an account?{" "}
               <Link
