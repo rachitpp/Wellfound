@@ -28,16 +28,23 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
+      // Get frontend URL from environment variable or use default origins
+      const frontendUrl = process.env.FRONTEND_URL;
+      
       const allowedOrigins = [
         "http://localhost:3000",
         "http://localhost:3300",
         "http://192.168.29.181:3000",
         "http://192.168.29.181:3300",
-        "https://wellfound-frontend.vercel.app",
-        "https://wellfound-frontend.onrender.com",
-        "https://wellfound-backend.onrender.com",
-        "https://wellfound.vercel.app",
+        "https://wellfound-1.onrender.com",
       ];
+      
+      // Add frontend URL from environment variable if it exists
+      if (frontendUrl) {
+        // Split by comma if multiple URLs are provided
+        const urls = frontendUrl.split(',').map(url => url.trim());
+        allowedOrigins.push(...urls);
+      }
 
       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
