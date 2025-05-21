@@ -15,7 +15,7 @@ export const registerSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
     role: z.enum(['job_seeker', 'employer'], { 
       errorMap: () => ({ message: "Role must be either 'job_seeker' or 'employer'" }) 
-    }),
+    }).optional(),
   }),
 });
 

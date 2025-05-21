@@ -7,11 +7,27 @@ import User from '../models/User';
 // @access  Public
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
+    console.log('Registration request received:', req.body);
+    
+    const { email, password, name, role = 'job_seeker' } = req.body;
+
+    // Check if required fields are present
+    if (!email || !password || !name) {
+      console.log('Missing required fields:', { email: !!email, password: !!password, name: !!name });
+      return res.status(400).json({ 
+        message: 'Missing required fields', 
+        details: { 
+          email: email ? undefined : 'Email is required',
+          password: password ? undefined : 'Password is required',
+          name: name ? undefined : 'Name is required'
+        } 
+      });
+    }
 
     // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
+      console.log('User already exists with email:', email);
       return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -20,13 +36,17 @@ export const register = async (req: Request, res: Response) => {
       email,
       password,
       name,
+      role
     });
 
     await user.save();
+    console.log('User created successfully with ID:', user.id);
 
     // Create and return JWT token
     const payload = {
       id: user.id,
+      name: user.name,
+      email: user.email
     };
 
     jwt.sign(
@@ -34,13 +54,19 @@ export const register = async (req: Request, res: Response) => {
       process.env.JWT_SECRET || 'default_jwt_secret',
       { expiresIn: '7d' },
       (err, token) => {
-        if (err) throw err;
-        res.json({ token });
+        if (err) {
+          console.error('JWT signing error:', err);
+          throw err;
+        }
+        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
       }
     );
   } catch (error) {
     console.error('Error in register:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ 
+      message: 'Server error', 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 
