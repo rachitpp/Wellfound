@@ -98,49 +98,37 @@ export const createApplication = async (
   jobId: string,
   notes: string = ''
 ): Promise<Application | null> => {
-  // Suppress the API error by using a try/catch but don't wait for it to fail
-  // This way we can immediately proceed to our fallback mechanism
-  api.post('/applications', { jobId, notes }).catch(() => {
-    console.log('API call failed as expected, using fallback');
-  });
-  
+  // Fire and forget API call
   try {
-    // Try to get the job from the API
-    const jobResponse = await api.get(`/jobs/${jobId}`);
-    const job = jobResponse.data;
-    console.log('Got job from API:', job);
-    
-    if (!job) {
-      throw new Error('Job data is null or invalid');
+    api.post('/applications', { jobId, notes });
+  } catch (_err) {
+    // Ignore errors, just log that we're using fallback
+    console.log('API call failed, using fallback');
+  }
+
+  // Get job data - first try API, then fallback to mock data
+  let jobData: Job;
+
+  // Try to get from API
+  try {
+    const response = await api.get(`/jobs/${jobId}`);
+    if (response.data && response.data._id) {
+      jobData = response.data;
+    } else {
+      throw new Error('Invalid job data from API');
     }
+  } catch (_error) {
+    // Ignore specific error details, just log that we're using fallback
+    console.log('Could not get job from API, using fallback');
     
-    // Create a mock application with the job data
-    const mockApplication: Application = {
-      _id: `mock-app-${uuidv4()}`,
-      job: job,
-      user: 'current-user',
-      status: 'applied',
-      appliedDate: new Date().toISOString(),
-      notes: notes,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    // Try to find in mock data
+    const mockJob = mockJobs.find(job => job._id === jobId);
     
-    // Save to localStorage
-    const mockApplications = getMockApplications();
-    mockApplications.push(mockApplication);
-    saveMockApplications(mockApplications);
-    
-    return mockApplication;
-  } catch (error) {
-    console.log('Could not get job from API, trying mock data:', error);
-    
-    // Try to get the job from mock data
-    const mockJob = mockJobs.find(mockJob => mockJob._id === jobId);
-    
-    // If we don't have a job in mock data, create a generic one
-    if (!mockJob) {
-      const genericJob: Job = {
+    if (mockJob) {
+      jobData = mockJob;
+    } else {
+      // Create a generic job as last resort
+      jobData = {
         _id: jobId,
         title: 'Job Position',
         company: 'Company',
@@ -151,46 +139,28 @@ export const createApplication = async (
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      
-      const mockApplication: Application = {
-        _id: `mock-app-${uuidv4()}`,
-        job: genericJob,
-        user: 'current-user',
-        status: 'applied',
-        appliedDate: new Date().toISOString(),
-        notes: notes,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      
-      // Save to localStorage
-      const mockApplications = getMockApplications();
-      mockApplications.push(mockApplication);
-      saveMockApplications(mockApplications);
-      
-      return mockApplication;
     }
-    
-    // At this point, mockJob is guaranteed to be non-null
-    // TypeScript doesn't recognize this, so we need to assert it
-    const mockApplication: Application = {
-      _id: `mock-app-${uuidv4()}`,
-      job: mockJob as Job, // Type assertion to tell TypeScript this is definitely a Job
-      user: 'current-user',
-      status: 'applied',
-      appliedDate: new Date().toISOString(),
-      notes: notes,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    // Save to localStorage
-    const mockApplications = getMockApplications();
-    mockApplications.push(mockApplication);
-    saveMockApplications(mockApplications);
-    
-    return mockApplication;
   }
+
+  // Now jobData is guaranteed to be a valid Job
+  const mockApplication: Application = {
+    _id: `mock-app-${uuidv4()}`,
+    job: jobData,
+    user: 'current-user',
+    status: 'applied',
+    appliedDate: new Date().toISOString(),
+    notes: notes,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  
+  // Save to localStorage
+  const mockApplications = getMockApplications();
+  mockApplications.push(mockApplication);
+  saveMockApplications(mockApplications);
+  
+  console.log('Created application:', mockApplication);
+  return mockApplication;
 };
 
 // Update application status
