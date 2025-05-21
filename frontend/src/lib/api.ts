@@ -2,10 +2,12 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 // Define both production and development URLs
-const PRODUCTION_API_URL = 'https://wellfound-backend.onrender.com/api';
+const PRODUCTION_API_URL = 'https://wellfound.onrender.com/api';
+const BACKUP_API_URL = 'https://wellfound-backend.onrender.com/api';
 const DEFAULT_API_URL = 'http://localhost:3300/api';
 const FALLBACK_API_URLS = [
   PRODUCTION_API_URL, // Try production URL first in fallbacks
+  BACKUP_API_URL,     // Then try the backup URL
   'http://localhost:3000/api',
   'http://localhost:5000/api',
   'http://localhost:8000/api'

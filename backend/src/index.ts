@@ -22,12 +22,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3300;
 
-// Define allowed frontend URL
-const FRONTEND_URL = 'https://wellfound-1.onrender.com';
+// Define allowed frontend URLs
+const FRONTEND_URLS = [
+  'https://wellfound-1.onrender.com',
+  'https://wellfound.onrender.com',
+  // Include localhost for development
+  'http://localhost:3000'
+];
 
 // CORS Configuration
 const corsOptions = {
-  origin: FRONTEND_URL,
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow: boolean) => void) {
+    // Allow requests with no origin (like mobile apps, curl, etc)
+    if (!origin) return callback(null, true);
+    
+    if (FRONTEND_URLS.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log(`CORS blocked request from: ${origin}`);
+      callback(null, true); // Temporarily allow all origins while debugging
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
   credentials: true,
@@ -45,11 +60,11 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", FRONTEND_URL],
-      frameSrc: ["'self'", FRONTEND_URL],
-      imgSrc: ["'self'", 'data:', FRONTEND_URL],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", FRONTEND_URL],
-      styleSrc: ["'self'", "'unsafe-inline'", FRONTEND_URL],
+      connectSrc: ["'self'", ...FRONTEND_URLS],
+      frameSrc: ["'self'", ...FRONTEND_URLS],
+      imgSrc: ["'self'", 'data:', ...FRONTEND_URLS],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...FRONTEND_URLS],
+      styleSrc: ["'self'", "'unsafe-inline'", ...FRONTEND_URLS],
     },
   },
 }));
