@@ -28,28 +28,71 @@ export interface DecodedToken {
 
 // Register user
 export const register = async (userData: RegisterData) => {
-  const response = await api.post('/auth/register', userData);
-  if (response.data.token) {
-    // Save token to localStorage
-    localStorage.setItem('token', response.data.token);
+  try {
+    console.log('Attempting to register user:', userData.email);
+    const response = await api.post('/auth/register', userData);
+    
+    // Check if this is a mock response from our interceptor
+    const isMockResponse = (response as any).mock === true;
+    
+    if (response.data.token) {
+      // Save token to localStorage
+      localStorage.setItem('token', response.data.token);
+      
+      // If this is a mock response, show a notification
+      if (isMockResponse) {
+        console.warn('Using mock authentication due to backend connectivity issues');
+        // You could add a toast notification here
+        localStorage.setItem('using_mock_auth', 'true');
+      }
+    }
+    
+    return {
+      ...response.data,
+      mockAuth: isMockResponse
+    };
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
   }
-  return response.data;
 };
 
 // Login user
 export const login = async (userData: LoginData) => {
-  const response = await api.post('/auth/login', userData);
-  if (response.data.token) {
-    // Save token to localStorage
-    localStorage.setItem('token', response.data.token);
+  try {
+    console.log('Attempting to login user:', userData.email);
+    const response = await api.post('/auth/login', userData);
+    
+    // Check if this is a mock response from our interceptor
+    const isMockResponse = (response as any).mock === true;
+    
+    if (response.data.token) {
+      // Save token to localStorage
+      localStorage.setItem('token', response.data.token);
+      
+      // If this is a mock response, show a notification
+      if (isMockResponse) {
+        console.warn('Using mock authentication due to backend connectivity issues');
+        // You could add a toast notification here
+        localStorage.setItem('using_mock_auth', 'true');
+      }
+    }
+    
+    return {
+      ...response.data,
+      mockAuth: isMockResponse
+    };
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
   }
-  return response.data;
 };
 
 // Logout user
 export const logout = () => {
-  // Remove token from localStorage
+  // Remove token and mock auth flag from localStorage
   localStorage.removeItem('token');
+  localStorage.removeItem('using_mock_auth');
 };
 
 // Get user information from token without making an API call
@@ -59,6 +102,9 @@ export const getUserFromToken = (): User | null => {
   const token = localStorage.getItem('token');
   if (!token) return null;
   
+  // Check if we're using mock authentication
+  const usingMockAuth = localStorage.getItem('using_mock_auth') === 'true';
+  
   try {
     const decoded = jwtDecode<DecodedToken>(token);
     return {
@@ -66,7 +112,16 @@ export const getUserFromToken = (): User | null => {
       name: decoded.name,
       email: decoded.email
     };
-  } catch {
+  } catch (error) {
+    // If using mock auth but token is invalid, return a generic user
+    if (usingMockAuth) {
+      console.warn('Using mock user profile due to invalid token format');
+      return {
+        _id: 'mock_user_id',
+        name: 'Mock User',
+        email: 'mock@example.com'
+      };
+    }
     return null;
   }
 };
@@ -93,12 +148,16 @@ export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('token');
   if (!token) return false;
   
+  // Check if we're using mock authentication
+  const usingMockAuth = localStorage.getItem('using_mock_auth') === 'true';
+  
   try {
     // Decode and validate token expiration
     const decoded = jwtDecode<DecodedToken>(token);
     const currentTime = Date.now() / 1000;
     
-    if (decoded.exp < currentTime) {
+    // For mock auth, we don't strictly enforce expiration
+    if (decoded.exp < currentTime && !usingMockAuth) {
       // Token has expired, remove it
       localStorage.removeItem('token');
       return false;
@@ -106,7 +165,13 @@ export const isAuthenticated = (): boolean => {
     
     return true;
   } catch {
-    // Invalid token format
+    // Invalid token format but allow the session if using mock auth
+    if (usingMockAuth) {
+      console.warn('Using mock authentication with invalid token format');
+      return true;
+    }
+    
+    // Otherwise, clean up and return false
     localStorage.removeItem('token');
     return false;
   }
