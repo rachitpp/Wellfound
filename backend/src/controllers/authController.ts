@@ -25,22 +25,39 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      console.log('User already exists with email:', email);
-      return res.status(400).json({ message: 'User already exists' });
+    let user;
+    try {
+      user = await User.findOne({ email });
+      if (user) {
+        console.log('User already exists with email:', email);
+        return res.status(400).json({ message: 'User already exists' });
+      }
+    } catch (dbError) {
+      console.error('Database error checking for existing user:', dbError);
+      return res.status(500).json({ 
+        message: 'Database error', 
+        details: 'Could not check if user exists'
+      });
     }
 
     // Create new user
-    user = new User({
-      email,
-      password,
-      name,
-      role
-    });
+    try {
+      user = new User({
+        email,
+        password,
+        name,
+        role
+      });
 
-    await user.save();
-    console.log('User created successfully with ID:', user.id);
+      await user.save();
+      console.log('User created successfully with ID:', user.id);
+    } catch (saveError) {
+      console.error('Error saving user to database:', saveError);
+      return res.status(500).json({ 
+        message: 'Database error', 
+        details: 'Could not create user account'
+      });
+    }
 
     // Create and return JWT token
     const payload = {
@@ -49,18 +66,25 @@ export const register = async (req: Request, res: Response) => {
       email: user.email
     };
 
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: '7d' },
-      (err, token) => {
-        if (err) {
-          console.error('JWT signing error:', err);
-          throw err;
-        }
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-      }
-    );
+    // Use Promise-based JWT sign instead of callback to handle errors better
+    try {
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET || 'default_jwt_secret',
+        { expiresIn: '7d' }
+      );
+      
+      return res.json({ 
+        token, 
+        user: { id: user.id, name: user.name, email: user.email } 
+      });
+    } catch (jwtError) {
+      console.error('JWT signing error:', jwtError);
+      return res.status(500).json({ 
+        message: 'Authentication error', 
+        details: 'Could not generate authentication token'
+      });
+    }
   } catch (error) {
     console.error('Error in register:', error);
     res.status(500).json({ 
@@ -75,18 +99,36 @@ export const register = async (req: Request, res: Response) => {
 // @access  Public
 export const login = async (req: Request, res: Response) => {
   try {
+    console.log('Login request received for email:', req.body.email);
     const { email, password } = req.body;
 
     // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    let user;
+    try {
+      user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
+    } catch (dbError) {
+      console.error('Database error finding user:', dbError);
+      return res.status(500).json({ 
+        message: 'Database error', 
+        details: 'Could not verify user credentials'
+      });
     }
 
     // Check password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    try {
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
+    } catch (passwordError) {
+      console.error('Password comparison error:', passwordError);
+      return res.status(500).json({ 
+        message: 'Authentication error', 
+        details: 'Could not verify password'
+      });
     }
 
     // Create and return JWT token
@@ -94,18 +136,29 @@ export const login = async (req: Request, res: Response) => {
       id: user.id,
     };
 
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'default_jwt_secret',
-      { expiresIn: '7d' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    // Use Promise-based JWT sign instead of callback to handle errors better
+    try {
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET || 'default_jwt_secret',
+        { expiresIn: '7d' }
+      );
+      
+      console.log('User logged in successfully:', user.id);
+      return res.json({ token });
+    } catch (jwtError) {
+      console.error('JWT signing error:', jwtError);
+      return res.status(500).json({ 
+        message: 'Authentication error', 
+        details: 'Could not generate authentication token'
+      });
+    }
   } catch (error) {
     console.error('Error in login:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ 
+      message: 'Server error', 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 

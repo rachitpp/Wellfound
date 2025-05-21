@@ -44,10 +44,25 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   
   try {
-    const salt = await bcrypt.genSalt(10);
+    // Add more detailed logging
+    console.log('Hashing password for user:', this.email);
+    
+    // Ensure password is a string
+    if (typeof this.password !== 'string') {
+      console.error('Password is not a string:', typeof this.password);
+      throw new Error('Password must be a string');
+    }
+    
+    // Generate salt with a lower cost factor if in production to avoid timeouts
+    const saltRounds = process.env.NODE_ENV === 'production' ? 8 : 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    
+    // Hash the password with a timeout
     this.password = await bcrypt.hash(this.password, salt);
+    console.log('Password hashed successfully');
     next();
   } catch (error: any) {
+    console.error('Error hashing password:', error);
     next(error);
   }
 });
