@@ -33,6 +33,10 @@ app.use(
         "http://localhost:3300",
         "http://192.168.29.181:3000",
         "http://192.168.29.181:3300",
+        "https://wellfound-frontend.vercel.app",
+        "https://wellfound-frontend.onrender.com",
+        "https://wellfound-backend.onrender.com",
+        "https://wellfound.vercel.app",
       ];
 
       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
@@ -77,6 +81,23 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/recommend", recommendRoutes);
 app.use("/api/saved-jobs", savedJobRoutes);
 app.use("/api/applications", applicationRoutes);
+
+// Root route for API documentation
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Welcome to Wellfound API",
+    version: "1.0.0",
+    endpoints: {
+      auth: "/api/auth",
+      profile: "/api/profile",
+      jobs: "/api/jobs",
+      recommendations: "/api/recommend",
+      savedJobs: "/api/saved-jobs",
+      applications: "/api/applications"
+    },
+    health: "/health"
+  });
+});
 
 // Health check route
 app.get("/health", (req, res) => {
