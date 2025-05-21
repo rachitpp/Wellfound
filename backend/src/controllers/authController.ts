@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import mongoose from 'mongoose';
 
 // @desc    Register user
 // @route   POST /api/auth/register
