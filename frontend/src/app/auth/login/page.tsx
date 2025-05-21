@@ -66,9 +66,20 @@ export default function LoginPage() {
     setLoginError("");
 
     try {
-      await login(formData);
-      router.push("/dashboard");
+      const response = await login(formData);
+      
+      // Check if we're using mock authentication
+      if (response.mockAuth) {
+        console.log('Using mock authentication mode');
+      }
+      
+      // Use a slight delay to ensure the token is properly saved before redirect
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 100);
+      
     } catch (error: unknown) {
+      console.error('Login error:', error);
       const errorMessage =
         error instanceof Error
           ? error.message

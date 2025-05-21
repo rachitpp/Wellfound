@@ -85,9 +85,21 @@ export default function RegisterPage() {
         email: formData.email,
         password: formData.password,
       };
-      await register(registerData);
-      router.push("/dashboard");
+      
+      const response = await register(registerData);
+      
+      // Check if we're using mock authentication
+      if (response.mockAuth) {
+        console.log('Using mock authentication mode for registration');
+      }
+      
+      // Add a slight delay before redirection to ensure token is saved
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 100);
+      
     } catch (error: unknown) {
+      console.error('Registration error:', error);
       const errorMessage =
         error instanceof Error
           ? error.message

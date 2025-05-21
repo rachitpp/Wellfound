@@ -1,6 +1,13 @@
 import api from './api';
 import { jwtDecode } from 'jwt-decode';
 
+// Type definition for API responses that may include mock flag
+interface ApiResponse<T = any> {
+  data: T;
+  status: number;
+  mock?: boolean;
+}
+
 export interface RegisterData {
   name: string;
   email: string;
@@ -112,7 +119,8 @@ export const getUserFromToken = (): User | null => {
       name: decoded.name,
       email: decoded.email
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    console.warn('Error decoding token:', error);
     // If using mock auth but token is invalid, return a generic user
     if (usingMockAuth) {
       console.warn('Using mock user profile due to invalid token format');
@@ -164,7 +172,8 @@ export const isAuthenticated = (): boolean => {
     }
     
     return true;
-  } catch {
+  } catch (error: unknown) {
+    console.warn('Error validating token:', error);
     // Invalid token format but allow the session if using mock auth
     if (usingMockAuth) {
       console.warn('Using mock authentication with invalid token format');
