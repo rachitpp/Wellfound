@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// Removed router since we're using window.location.href for navigation
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
-// Removed unused import: import { login } from "@/lib/authService";
 import {
   EnvelopeIcon,
   LockClosedIcon,
@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
-  const router = useRouter();
+  // Router removed since we're using window.location.href directly
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -69,27 +69,29 @@ export default function LoginPage() {
       // Development bypass - skip API call and authorize directly
       console.log('Client-side login bypass for', formData.email);
       
-      // Create a mock JWT token
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRldjEyMyIsIm5hbWUiOiJEZXZlbG9wZXIiLCJlbWFpbCI6ImRldkBleGFtcGxlLmNvbSIsImlhdCI6MTYzMjU4MjMxOSwiZXhwIjoxOTQ3OTQyMzE5fQ.eLLqAQH9YYC3_dOniN7qDj9_c5K0gjB-LX_NHBQc9nA';
+      // Create a mock JWT token with user information embedded
+      const mockUserId = 'user_' + Math.random().toString(36).substring(2, 10);
+      const userName = formData.email.split('@')[0];
       
-      // Store token in localStorage
-      localStorage.setItem('token', token);
-      
-      // Store user's intended email for mock authentication
+      // Store all needed user data in localStorage
+      localStorage.setItem('token', 'mock-jwt-token-for-development-only');
+      localStorage.setItem('user_id', mockUserId);
+      localStorage.setItem('user_name', userName);
       localStorage.setItem('user_email', formData.email);
       localStorage.setItem('using_mock_auth', 'true');
       
-      // Use a slight delay before redirect for a more natural feel
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 300);
+      console.log('Client-side auth enabled, redirecting to dashboard...');
+      
+      // Force a page reload to ensure all auth state is properly recognized
+      // This is more reliable than just using the router
+      window.location.href = '/dashboard';
       
     } catch (error: unknown) {
       console.error('Login error:', error);
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to login. Please try again.";
+          : "An unexpected error occurred. Please try again.";
       setLoginError(errorMessage);
     } finally {
       setIsLoading(false);

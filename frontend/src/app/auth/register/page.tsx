@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// Removed router import since we're using window.location.href
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
-// Removed unused import: import { register } from "@/lib/authService";
 import {
   EnvelopeIcon,
   LockClosedIcon,
@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function RegisterPage() {
-  const router = useRouter();
+  // Router removed since we're using window.location.href directly
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -79,39 +79,31 @@ export default function RegisterPage() {
     setRegisterError("");
 
     try {
-      // Client-side registration that bypasses the backend entirely
-      console.log('Client-side registration bypass for:', formData.name, formData.email);
+      // Development bypass - skip API call and authorize directly
+      console.log('Client-side registration bypass for', formData.email);
       
-      // Create a custom JWT token that includes user information
-      const payload = {
-        id: 'user_' + Math.random().toString(36).substring(2, 10),
-        name: formData.name,
-        email: formData.email,
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60) // 1 year expiration
-      };
+      // Create a mock user ID
+      const mockUserId = 'user_' + Math.random().toString(36).substring(2, 10);
       
-      // This is just a mock token with a simple structure
-      const base64Payload = btoa(JSON.stringify(payload));
-      const mockToken = `header.${base64Payload}.signature`;
-      
-      // Store in localStorage
-      localStorage.setItem('token', mockToken);
+      // Store all necessary user data in localStorage
+      localStorage.setItem('token', 'mock-jwt-token-for-development-only');
+      localStorage.setItem('user_id', mockUserId);
       localStorage.setItem('user_name', formData.name);
       localStorage.setItem('user_email', formData.email);
       localStorage.setItem('using_mock_auth', 'true');
       
-      // Add a slight delay for a more natural feel
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 300);
+      console.log('Client-side auth enabled, redirecting to dashboard...');
+      
+      // Force a page reload to ensure all auth state is properly recognized
+      // This is more reliable than just using the router
+      window.location.href = '/dashboard';
       
     } catch (error: unknown) {
       console.error('Registration error:', error);
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to register. Please try again.";
+          : "An unexpected error occurred. Please try again.";
       setRegisterError(errorMessage);
     } finally {
       setIsLoading(false);

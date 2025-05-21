@@ -1,23 +1,8 @@
 import api from './api';
 import { jwtDecode } from 'jwt-decode';
 
-// Type definition for API responses that may include mock flag
-interface ApiResponse<T = Record<string, unknown>> {
-  data: T;
-  status: number;
-  mock?: boolean;
-}
-
-// Type definition for auth response
-interface AuthResponse {
-  token: string;
-  user?: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  mockAuth?: boolean;
-}
+// We now handle types directly in the function signatures
+// These type definitions have been removed as they were unused
 
 export interface RegisterData {
   name: string;
