@@ -28,6 +28,24 @@ router.get('/health', (req, res) => {
 // @access  Public
 router.post('/register', validate(registerSchema), register);
 
+// @route   GET /api/auth/register
+// @desc    Info about registration endpoint (for direct browser visits)
+// @access  Public
+router.get('/register', (req, res) => {
+  res.status(200).json({
+    message: 'Registration endpoint requires a POST request with email, password, and name',
+    documentation: 'Use this endpoint with a POST request to register a new user',
+    requiredFields: ['email', 'password', 'name'],
+    optionalFields: ['role'],
+    example: {
+      email: 'user@example.com',
+      password: 'password123',
+      name: 'John Doe',
+      role: 'job_seeker'
+    }
+  });
+});
+
 // @route   POST /api/auth/debug-register
 // @desc    Debug registration endpoint (bypasses validation)
 // @access  Public

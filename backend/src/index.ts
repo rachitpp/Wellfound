@@ -122,6 +122,53 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+// Global error handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Unhandled error:', err);
+  
+  // Check for specific error types and provide appropriate responses
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({
+      error: 'Validation Error',
+      message: err.message,
+      details: err.errors
+    });
+  }
+  
+  if (err.name === 'MongoServerError' && err.code === 11000) {
+    return res.status(400).json({
+      error: 'Duplicate Key Error',
+      message: 'A record with that data already exists',
+      details: err.keyValue
+    });
+  }
+  
+  // Default error response
+  res.status(500).json({
+    error: 'Server Error',
+    message: process.env.NODE_ENV === 'production' 
+      ? 'An unexpected error occurred' 
+      : err.message,
+    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+  });
+});
+
+// Add 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Cannot ${req.method} ${req.path}`,
+    availableEndpoints: {
+      auth: '/api/auth',
+      profile: '/api/profile',
+      jobs: '/api/jobs',
+      recommendations: '/api/recommend',
+      savedJobs: '/api/saved-jobs',
+      applications: '/api/applications'
+    }
+  });
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
