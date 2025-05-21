@@ -22,10 +22,26 @@ const app = express();
 const PORT = process.env.PORT || 3300;
 
 // Middleware
-// Enable CORS for all routes
+// Remove any existing cors middleware and use a fresh configuration
+
+// Define the specific frontend URL that should be allowed
+const FRONTEND_URL = 'https://wellfound-1.onrender.com';
+
+// Configure CORS options
+const corsOptions = {
+  origin: FRONTEND_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  credentials: true,
+  maxAge: 86400 // 24 hours
+};
+
+// Apply CORS middleware with the specific options
+app.use(cors(corsOptions));
+
+// Add a backup middleware for CORS headers to ensure they're always set
 app.use((req, res, next) => {
-  // Set CORS headers for all responses
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', FRONTEND_URL);
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -38,16 +54,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// Also keep the cors middleware for backward compatibility
-app.use(cors({
-  origin: '*',
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+// Apply helmet middleware for security headers with CORS-compatible settings
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  crossOriginOpenerPolicy: { policy: 'unsafe-none' },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", FRONTEND_URL],
+      frameSrc: ["'self'", FRONTEND_URL],
+      imgSrc: ["'self'", 'data:', FRONTEND_URL],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", FRONTEND_URL],
+      styleSrc: ["'self'", "'unsafe-inline'", FRONTEND_URL],
+    },
+  },
 }));
-
-// Apply helmet middleware for security headers
-app.use(helmet());
 
 // Rate limiting middleware to prevent abuse and DDoS
 const limiter = rateLimit({
@@ -97,6 +118,10 @@ app.get("/", (req, res) => {
 
 // Health check route - make it as simple as possible to avoid errors
 app.get("/health", (req, res) => {
+  // Explicitly set CORS headers for health check
+  res.header('Access-Control-Allow-Origin', FRONTEND_URL);
+  res.header('Access-Control-Allow-Methods', 'GET');
+  
   try {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
   } catch (error) {
@@ -108,6 +133,10 @@ app.get("/health", (req, res) => {
 
 // Also add the health check at the API root for API URL validation
 app.get("/api/health", (req, res) => {
+  // Explicitly set CORS headers for API health check
+  res.header('Access-Control-Allow-Origin', FRONTEND_URL);
+  res.header('Access-Control-Allow-Methods', 'GET');
+  
   try {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
   } catch (error) {
