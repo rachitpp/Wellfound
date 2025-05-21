@@ -2,10 +2,21 @@ import api from './api';
 import { jwtDecode } from 'jwt-decode';
 
 // Type definition for API responses that may include mock flag
-interface ApiResponse<T = any> {
+interface ApiResponse<T = Record<string, unknown>> {
   data: T;
   status: number;
   mock?: boolean;
+}
+
+// Type definition for auth response
+interface AuthResponse {
+  token: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  mockAuth?: boolean;
 }
 
 export interface RegisterData {
@@ -112,7 +123,23 @@ export const getUserFromToken = (): User | null => {
   // Check if we're using mock authentication
   const usingMockAuth = localStorage.getItem('using_mock_auth') === 'true';
   
+  if (usingMockAuth) {
+    // For client-side auth, use the values stored in localStorage directly
+    const name = localStorage.getItem('user_name') || 'User';
+    const email = localStorage.getItem('user_email') || 'user@example.com';
+    const id = localStorage.getItem('user_id') || 'user_' + Math.random().toString(36).substring(2, 10);
+    
+    console.log('Using client-side auth - user:', name, email);
+    
+    return {
+      _id: id,
+      name: name,
+      email: email
+    };
+  }
+  
   try {
+    // For real JWT tokens, decode them properly
     const decoded = jwtDecode<DecodedToken>(token);
     return {
       _id: decoded.id,
@@ -121,16 +148,12 @@ export const getUserFromToken = (): User | null => {
     };
   } catch (error: unknown) {
     console.warn('Error decoding token:', error);
-    // If using mock auth but token is invalid, return a generic user
-    if (usingMockAuth) {
-      console.warn('Using mock user profile due to invalid token format');
-      return {
-        _id: 'mock_user_id',
-        name: 'Mock User',
-        email: 'mock@example.com'
-      };
-    }
-    return null;
+    // Fallback to a generic user if all else fails
+    return {
+      _id: 'fallback_user_id',
+      name: 'User',
+      email: 'user@example.com'
+    };
   }
 };
 
@@ -156,16 +179,19 @@ export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('token');
   if (!token) return false;
   
-  // Check if we're using mock authentication
+  // If using client-side authentication, always return true
   const usingMockAuth = localStorage.getItem('using_mock_auth') === 'true';
+  if (usingMockAuth) {
+    console.log('Using client-side authentication mode');
+    return true;
+  }
   
   try {
-    // Decode and validate token expiration
+    // Only validate real tokens
     const decoded = jwtDecode<DecodedToken>(token);
     const currentTime = Date.now() / 1000;
     
-    // For mock auth, we don't strictly enforce expiration
-    if (decoded.exp < currentTime && !usingMockAuth) {
+    if (decoded.exp < currentTime) {
       // Token has expired, remove it
       localStorage.removeItem('token');
       return false;
@@ -174,13 +200,8 @@ export const isAuthenticated = (): boolean => {
     return true;
   } catch (error: unknown) {
     console.warn('Error validating token:', error);
-    // Invalid token format but allow the session if using mock auth
-    if (usingMockAuth) {
-      console.warn('Using mock authentication with invalid token format');
-      return true;
-    }
     
-    // Otherwise, clean up and return false
+    // Clean up and return false
     localStorage.removeItem('token');
     return false;
   }
