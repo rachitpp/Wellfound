@@ -10,7 +10,7 @@ export type ApplicationStatus = 'applied' | 'interviewing' | 'offered' | 'reject
 
 export interface Application {
   _id: string;
-  job: Job;
+  job: Job; // This must be a non-null Job
   user: string;
   status: ApplicationStatus;
   appliedDate: string;
@@ -171,10 +171,11 @@ export const createApplication = async (
       return mockApplication;
     }
     
-    // Create a mock application with mock job data
+    // At this point, mockJob is guaranteed to be non-null
+    // TypeScript doesn't recognize this, so we need to assert it
     const mockApplication: Application = {
       _id: `mock-app-${uuidv4()}`,
-      job: mockJob,
+      job: mockJob as Job, // Type assertion to tell TypeScript this is definitely a Job
       user: 'current-user',
       status: 'applied',
       appliedDate: new Date().toISOString(),
