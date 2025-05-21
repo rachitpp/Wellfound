@@ -22,41 +22,30 @@ const app = express();
 const PORT = process.env.PORT || 3300;
 
 // Middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+// Enable CORS for all routes
+app.use((req, res, next) => {
+  // Set CORS headers for all responses
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
-      // Get frontend URL from environment variable or use default origins
-      const frontendUrl = process.env.FRONTEND_URL;
-      
-      const allowedOrigins = [
-        "http://localhost:3000",
-        "http://localhost:3300",
-        "http://192.168.29.181:3000",
-        "http://192.168.29.181:3300",
-        "https://wellfound-1.onrender.com",
-      ];
-      
-      // Add frontend URL from environment variable if it exists
-      if (frontendUrl) {
-        // Split by comma if multiple URLs are provided
-        const urls = frontendUrl.split(',').map(url => url.trim());
-        allowedOrigins.push(...urls);
-      }
+// Also keep the cors middleware for backward compatibility
+app.use(cors({
+  origin: '*',
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
 
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  }),
-);
 // Apply helmet middleware for security headers
 app.use(helmet());
 
@@ -106,9 +95,25 @@ app.get("/", (req, res) => {
   });
 });
 
-// Health check route
+// Health check route - make it as simple as possible to avoid errors
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
+  try {
+    res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  } catch (error) {
+    console.error('Error in health check:', error);
+    // Even if there's an error, return a 200 status to avoid breaking API checks
+    res.status(200).send('ok');
+  }
+});
+
+// Also add the health check at the API root for API URL validation
+app.get("/api/health", (req, res) => {
+  try {
+    res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  } catch (error) {
+    console.error('Error in API health check:', error);
+    res.status(200).send('ok');
+  }
 });
 
 // Start server

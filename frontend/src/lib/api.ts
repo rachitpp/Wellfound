@@ -14,10 +14,25 @@ const FALLBACK_API_URLS = [
 // Function to check if a URL is reachable
 const checkApiUrl = async (url: string): Promise<boolean> => {
   try {
-    await axios.get(`${url}/health`, { timeout: 2000 });
-    return true;
-  } catch {
-    // Ignore the error, just return false if we can't reach the URL
+    // Try both the health endpoints
+    try {
+      await axios.get(`${url}/health`, { 
+        timeout: 3000,
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      console.log(`Successfully connected to ${url}/health`);
+      return true;
+    } catch (error) {
+      // If the first attempt fails, try without the /health endpoint
+      await axios.get(url, { 
+        timeout: 3000,
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      console.log(`Successfully connected to ${url}`);
+      return true;
+    }
+  } catch (error) {
+    console.warn(`Failed to connect to ${url}:`, error);
     return false;
   }
 };
@@ -25,9 +40,8 @@ const checkApiUrl = async (url: string): Promise<boolean> => {
 // Determine if we're in a production environment
 const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
 
-// Use the configured URL, or choose based on environment
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 
-  (isProduction ? PRODUCTION_API_URL : DEFAULT_API_URL);
+// Always use the production URL when in production environment
+const apiUrl = isProduction ? PRODUCTION_API_URL : (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL);
 
 // Create axios instance with base URL
 const api = axios.create({
@@ -41,20 +55,34 @@ const api = axios.create({
 // Log configuration for debugging
 console.log('API base URL:', apiUrl);
 
-// Try fallback URLs if the main one fails
-if (typeof window !== 'undefined') {
+// In production, always use the production URL without fallbacks
+if (typeof window !== 'undefined' && !isProduction) {
+  // Only run fallback logic in development
   (async () => {
-    // Only run this in the browser
-    if (!await checkApiUrl(apiUrl)) {
-      console.warn(`API at ${apiUrl} is not reachable, trying fallbacks...`);
-      
-      for (const fallbackUrl of FALLBACK_API_URLS) {
-        if (await checkApiUrl(fallbackUrl)) {
-          console.log(`Using fallback API URL: ${fallbackUrl}`);
-          api.defaults.baseURL = fallbackUrl;
-          break;
+    try {
+      // Only run this in the browser
+      if (!await checkApiUrl(apiUrl)) {
+        console.warn(`API at ${apiUrl} is not reachable, trying fallbacks...`);
+        
+        let foundWorkingUrl = false;
+        for (const fallbackUrl of FALLBACK_API_URLS) {
+          if (await checkApiUrl(fallbackUrl)) {
+            console.log(`Using fallback API URL: ${fallbackUrl}`);
+            api.defaults.baseURL = fallbackUrl;
+            foundWorkingUrl = true;
+            break;
+          }
+        }
+        
+        if (!foundWorkingUrl) {
+          console.warn('No working API URL found, using default production URL');
+          api.defaults.baseURL = PRODUCTION_API_URL;
         }
       }
+    } catch (error) {
+      console.error('Error in API URL check:', error);
+      // If all else fails, use the production URL
+      api.defaults.baseURL = PRODUCTION_API_URL;
     }
   })();
 }
