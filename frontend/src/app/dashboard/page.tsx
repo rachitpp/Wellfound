@@ -33,12 +33,20 @@ export default function DashboardPage() {
   const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   useEffect(() => {
-    // Check authentication first
-    if (!isAuthenticated()) {
-      router.push('/auth/login');
-      return;
-    }
-    setIsAuthChecking(false);
+    // Check authentication first - use immediate flag to prevent redirect loop
+    const checkAuth = async () => {
+      // Make sure we check auth only once
+      if (isAuthenticated()) {
+        console.log('User is authenticated, proceeding to dashboard');
+        setIsAuthChecking(false);
+      } else {
+        console.log('User is not authenticated, redirecting to login');
+        window.location.href = '/auth/login';
+        return;
+      }
+    };
+    
+    checkAuth();
     
     const fetchDashboardData = async () => {
       try {

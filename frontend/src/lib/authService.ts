@@ -142,10 +142,27 @@ export const getUserFromToken = (): User | null => {
   }
 };
 
-// Get current user from API
+// Get current user from API or client-side auth
 export const getCurrentUser = async (): Promise<User | null> => {
   try {
-    // Try to get user from token first for faster response
+    // Check if using client-side auth first - this is most reliable
+    const usingMockAuth = localStorage.getItem('using_mock_auth') === 'true';
+    if (usingMockAuth) {
+      console.log('Using client-side auth for getCurrentUser');
+      
+      // Get user data from localStorage
+      const name = localStorage.getItem('user_name') || 'User';
+      const email = localStorage.getItem('user_email') || 'user@example.com';
+      const id = localStorage.getItem('user_id') || 'user_' + Math.random().toString(36).substring(2, 10);
+      
+      return {
+        _id: id,
+        name: name,
+        email: email
+      };
+    }
+    
+    // Try to get user from token next
     const tokenUser = getUserFromToken();
     if (tokenUser) return tokenUser;
     
@@ -153,6 +170,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
     const response = await api.get('/auth/me');
     return response.data;
   } catch (error) {
+    console.warn('Error in getCurrentUser:', error);
     return null;
   }
 };
